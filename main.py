@@ -3,8 +3,6 @@
 """Main entry point for the CARLA Web GUI application."""
 
 from argparse import ArgumentParser
-from logging import DEBUG, INFO, basicConfig, info
-from src import create_client
 from website import create_app
 
 __author__ = "Mateus Aleixo"
@@ -62,12 +60,11 @@ def main():
 
     args = argparser.parse_args()
 
-    basicConfig(
-        format="%(levelname)s: %(message)s", level=DEBUG if args.debug else INFO
-    )
-    info("listening to server %s:%s", args.host, args.port)
+    with open(".env", "w") as file:
+        file.write(f"DEBUG={args.debug}\n")
+        file.write(f"HOST={args.host}\n")
+        file.write(f"PORT={args.port}\n")
 
-    create_client(args.host, args.port)
     app = create_app()
 
     app.run(host=args.app_host, port=args.app_port, debug=args.debug)
