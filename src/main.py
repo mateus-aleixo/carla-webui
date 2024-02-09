@@ -1,7 +1,8 @@
 from carla import Client
 from dotenv import load_dotenv
 from logging import DEBUG, INFO, basicConfig, info
-from os import path, getenv
+from os import getenv, path
+from random import choice
 
 
 def create_client(host: str, port: int) -> Client:

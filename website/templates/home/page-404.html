@@ -2,32 +2,17 @@
 
 {% block title %} 404 Page {% endblock %}
 
+{% block stylesheets %}
+<link rel="stylesheet" href="../../static/assets/css/error-page.css">
+{% endblock %}
+
 {% block content %}
-
-<div class="auth-wrapper">
-    <div class="auth-content">
-        <!--div class="auth-bg">
-            <span class="r"></span>
-            <span class="r s"></span>
-            <span class="r s"></span>
-            <span class="r"></span>
-        </div-->
-        <div class="card">
-            <div class="card-body text-center">
-                <div class="mb-4">
-                    <i class="feather x-circle"></i>
-                </div>
-                <h3 class="mb-4">Error 404</h3>
-
-                <br />
-
-                <span class="mb-0 text-muted">
-                    Page not found - <a href="/">Home</a>
-                </span>
-
-            </div>
-        <div>
+<section class="error_page">
+    <div class="auth-wrapper">
+        <div class="auth-content">
+            <h1 class="text-center" style="font-size: 80px;">Error 404</h1>
+            <a href="/" class="home_link">Go to Home</a>
+        </div>
     </div>
-</div>
-
+</section>
 {% endblock content %}

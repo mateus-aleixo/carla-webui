@@ -18,7 +18,6 @@ def get_segment(request):
 
 @views.route("/")
 def route_default():
-    print("teste")
     return redirect(url_for("views.index"))
 
 
@@ -45,12 +44,3 @@ def route_template(template):
         status = 500
 
     return page, status
-
-
-# @blueprint.route("/test", methods=["POST"])
-# def test():
-#    from subprocess import run
-#
-#    run(["python", "main.py"], cwd=".\\src")
-#
-#    return redirect(url_for("blueprint.home"))

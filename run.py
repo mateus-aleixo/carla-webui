@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-"""Main entry point for the CARLA Web GUI application."""
+"""Entry point of the CARLA Web GUI application."""
 
 from argparse import ArgumentParser
+from subprocess import Popen
 from website import create_app
+
 
 __author__ = "Mateus Aleixo"
 __copyright__ = "Copyright (c) 2024 Mateus Aleixo"
@@ -67,6 +69,7 @@ def main():
 
     app = create_app()
 
+    Popen(["python", "main.py"], cwd="src")
     app.run(host=args.app_host, port=args.app_port, debug=args.debug)
 
 
