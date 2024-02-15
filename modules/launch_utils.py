@@ -98,7 +98,7 @@ def check_python_version():
         supported_minors = [0, 7, 8]
     else:
         supported_majors = [2, 3]
-        supported_minors = [7, 8]
+        supported_minors = [7, 8, 10]
 
     if not (major in supported_majors and minor in supported_minors):
         import modules.errors
