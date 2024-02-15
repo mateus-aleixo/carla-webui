@@ -1,7 +1,6 @@
-from .views import views
 from flask import Flask
 from secrets import token_urlsafe
-
+from website.views import views
 
 def create_app():
     app = Flask(__name__)
