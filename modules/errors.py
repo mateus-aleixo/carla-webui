@@ -42,3 +42,10 @@ def print_error_explanation(message):
         print(line, file=sys.stderr)
 
     print("=" * max_len, file=sys.stderr)
+
+
+def get_exceptions():
+    try:
+        return list(reversed(exception_records))
+    except Exception as e:
+        return str(e)

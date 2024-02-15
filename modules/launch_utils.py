@@ -221,3 +221,17 @@ def start():
 
     print(f"Launching Web UI with arguments: {' '.join(sys.argv[1:])}")
     webui.main()
+
+
+def dump_sysinfo():
+    import datetime
+
+    from modules import sysinfo
+
+    text = sysinfo.get()
+    filename = f"sysinfo-{datetime.datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}.json"
+
+    with open(filename, "w", encoding="utf8") as file:
+        file.write(text)
+
+    return filename

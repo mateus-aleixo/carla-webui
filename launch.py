@@ -5,6 +5,8 @@ python = launch_utils.python
 git = launch_utils.git
 index_url = launch_utils.index_url
 
+commit_hash = launch_utils.commit_hash
+
 run = launch_utils.run
 is_installed = launch_utils.is_installed
 run_pip = launch_utils.run_pip
