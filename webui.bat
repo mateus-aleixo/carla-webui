@@ -40,6 +40,16 @@ goto :show_stdout_stderr
 
 :activate_venv
 set PYTHON="%VENV_DIR%\Scripts\Python.exe"
+%PYTHON% -m pip install --upgrade pip > tmp/stdout.txt 2> tmp/stderr.txt
+if %ERRORLEVEL% == 0 goto :install_packaging
+echo Unable to upgrade pip in venv
+goto :show_stdout_stderr
+
+:install_packaging
+%PYTHON% -m pip install packaging==23.2 > tmp/stdout.txt 2> tmp/stderr.txt
+if %ERRORLEVEL% == 0 goto :launch
+echo Unable to install pip in venv
+goto :show_stdout_stderr
 echo venv %PYTHON%
 
 :launch

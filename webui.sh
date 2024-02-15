@@ -155,6 +155,12 @@ then
         printf "\n%s\n" "${delimiter}"
         exit 1
     fi
+
+    if [[ $first_launch -eq 1 ]]
+    then
+        "${python_cmd}" -m pip install --upgrade pip
+        "${python_cmd}" -m pip install packaging==23.2
+    fi
 else
     printf "\n%s\n" "${delimiter}"
     printf "python venv already activate or run without venv: ${VIRTUAL_ENV}"

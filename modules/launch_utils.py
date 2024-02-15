@@ -95,7 +95,7 @@ def check_python_version():
 
     if is_windows:
         supported_majors = [3]
-        supported_minors = [0, 7, 8]
+        supported_minors = [6, 7, 8, 9]
     else:
         supported_majors = [2, 3]
         supported_minors = [7, 8, 10]

@@ -76,6 +76,11 @@ parser.add_argument(
     metavar="P",
 )
 parser.add_argument(
+    "--skip-install",
+    action="store_true",
+    help="launch.py argument: skip installation of packages",
+)
+parser.add_argument(
     "--skip-prepare-environment",
     action="store_true",
     help="launch.py argument: skip all environment preparation",
