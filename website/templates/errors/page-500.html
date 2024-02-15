@@ -1,0 +1,18 @@
+{% extends "base/base.html" %}
+
+{% block title %} 500 Page {% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="../../static/assets/css/error-page.css">
+{% endblock %}
+
+{% block content %}
+<section class="error_page">
+    <div class="auth-wrapper">
+        <div class="auth-content">
+            <h1 class="text-center" style="font-size: 80px;">Error 500</h1>
+            <a href="/" class="home_link">Go to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock content %}

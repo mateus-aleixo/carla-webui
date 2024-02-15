@@ -4,17 +4,6 @@ import os
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    "--administrator",
-    action="store_true",
-    default=False,
-    help="administrator rights",
-)
-parser.add_argument(
-    "--api-log",
-    action="store_true",
-    help="use api-log=True to enable logging of all API requests",
-)
-parser.add_argument(
     "--app-host",
     default="127.0.0.1",
     help="IP of the Flask app (default: 127.0.0.1)",

@@ -217,7 +217,7 @@ def prepare_environment():
 
 
 def start():
-    import webui
+    from src import webui
 
     print(f"Launching Web UI with arguments: {' '.join(sys.argv[1:])}")
     webui.main()
