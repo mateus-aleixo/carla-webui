@@ -13,7 +13,9 @@ def create_client(host, port):
 
 
 def main():
-    dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".."))
+    dotenv.load_dotenv(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+    )
 
     host = os.getenv("HOST", "localhost")
     port = int(os.getenv("PORT", 2000))
@@ -28,13 +30,6 @@ def main():
     logging.info("listening to server %s:%s", host, port)
 
     client = create_client(host, port)
-
-    if not client:
-        logging.error("failed to connect to server")
-        return
-    else:
-        logging.info("connected to server")
-        return
 
 
 if __name__ == "__main__":

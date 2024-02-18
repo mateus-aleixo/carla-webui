@@ -8,4 +8,3 @@
 #venv_dir="venv"
 #export LAUNCH_SCRIPT="launch.py"
 #export REQS_FILE="requirements_versions.txt"
-#export NO_TCMALLOC="True"

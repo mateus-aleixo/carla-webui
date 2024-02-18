@@ -20,7 +20,7 @@ parser.add_argument(
     "--autolaunch",
     action="store_true",
     default=False,
-    help="open the webui URL in the system's default browser upon launch",
+    help="open the webui URL in the system's default browser upon launch (only if --flask-debug is not set)",
 )
 parser.add_argument(
     "--data-dir",

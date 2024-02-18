@@ -12,7 +12,11 @@ def main():
 
     app = create_app()
 
-    Popen(["python", "carla.py"], cwd="src")
+    Popen(["python", "api.py"], cwd="src")
+
+    if args.autolaunch and not args.flask_debug:
+        open_new(f"http://{args.app_host}:{args.app_port}")
+
     app.run(host=args.app_host, port=args.app_port, debug=args.flask_debug)
 
 
