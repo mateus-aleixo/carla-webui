@@ -8,7 +8,6 @@ from functools import lru_cache
 from importlib import metadata, util
 from modules import cmd_args, logging_config
 from modules.paths_internal import script_path
-from modules.timer import startup_timer
 
 args, _ = cmd_args.parser.parse_known_args()
 logging_config.setup_logging(args.loglevel)
@@ -191,11 +190,7 @@ def prepare_environment():
     if not args.skip_python_version_check:
         check_python_version()
 
-    startup_timer.record("checks")
-
     commit = commit_hash()
-
-    startup_timer.record("git version info")
 
     print(f"Python {sys.version}")
     print(f"Commit hash: {commit}")
@@ -205,11 +200,9 @@ def prepare_environment():
 
     if not requirements_met(requirements_file):
         run_pip(f'install -r "{requirements_file}"', "requirements")
-        startup_timer.record("install requirements")
 
     if args.update_check:
         version_check(commit)
-        startup_timer.record("check version")
 
     if "--exit" in sys.argv:
         print("Exiting because of --exit argument")

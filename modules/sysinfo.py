@@ -7,7 +7,7 @@ import platform
 import psutil
 import sys
 
-from modules import paths_internal, errors, timer
+from modules import paths_internal, errors
 
 checksum_token = "MateusAleixo_UBI_2024"
 environment_whitelist = {
@@ -72,7 +72,6 @@ def get_dict():
             if getattr(ram, x, 0) != 0
         },
         "Environment": get_environment(),
-        "Startup": timer.startup_record,
         "Packages": sorted(
             [f"{pkg.key}=={pkg.version}" for pkg in pkg_resources.working_set]
         ),
