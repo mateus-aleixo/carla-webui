@@ -22,11 +22,8 @@ def main():
         print(f"Sysinfo saved as {filename}. Exiting...")
         exit(0)
 
-    launch_utils.startup_timer.record("initial startup")
-
-    with launch_utils.startup_timer.subcategory("prepare environment"):
-        if not args.skip_prepare_environment:
-            prepare_environment()
+    if not args.skip_prepare_environment:
+        prepare_environment()
 
     start()
 

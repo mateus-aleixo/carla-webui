@@ -53,11 +53,6 @@ parser.add_argument(
     metavar="L",
 )
 parser.add_argument(
-    "--log-startup",
-    action="store_true",
-    help="launch.py argument: print a detailed log of what's happening at startup",
-)
-parser.add_argument(
     "--port",
     default=2000,
     type=int,
@@ -80,10 +75,15 @@ parser.add_argument(
     help="launch.py argument: do not check python version",
 )
 parser.add_argument(
+    "--sync",
+    action="store_true",
+    help="syncronous mode execution",
+)
+parser.add_argument(
     "--theme",
-    default=None,
+    default="light",
     type=str,
-    help="launches the UI with light or dark theme",
+    help="launches the UI with light or dark theme (default: light)",
     metavar="T",
 )
 parser.add_argument(

@@ -48,7 +48,7 @@ goto :show_stdout_stderr
 :install_packaging
 %PYTHON% -m pip install packaging==23.2 > tmp/stdout.txt 2> tmp/stderr.txt
 if %ERRORLEVEL% == 0 goto :launch
-echo Unable to install pip in venv
+echo Unable to install packaging
 goto :show_stdout_stderr
 echo venv %PYTHON%
 
