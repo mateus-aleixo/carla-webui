@@ -44,13 +44,6 @@ except Exception as e:
     logging.error(e)
 
 
-def invalid():
-    return sim_world is None
-
-
-def change_weather(number):
-    if invalid():
+def checker():
+    if sim_world is None:
         raise Exception("World is not initialized")
-
-    weather = carla.WeatherParameters(number)
-    sim_world.set_weather(weather)

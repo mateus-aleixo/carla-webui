@@ -17,12 +17,12 @@ def get_segment(request):
     return segment
 
 
-@views.route("/")
+@views.route("/", methods=["GET"])
 def route_default():
     return index()
 
 
-@views.route("/index")
+@views.route("/index", methods=["GET"])
 def index():
     return render_template("home/index.html", segment="index", theme=f"{args.theme}")
 
@@ -35,7 +35,7 @@ def route_template(template):
 
         segment = get_segment(request)
 
-        page = render_template("home/" + template, segment=segment)
+        page = render_template(template, segment=segment)
         status = 200
     except TemplateNotFound:
         page = render_template("error/page-404.html")
@@ -50,6 +50,26 @@ def route_template(template):
 @views.route("/shutdown", methods=["GET"])
 def shutdown():
     return render_template("error/page-500.html")
+
+
+@views.route("/load_map", methods=["GET"])
+def load_map():
+    return render_template("views/map.html", theme=f"{args.theme}")
+
+
+@views.route("/add_npc", methods=["GET"])
+def add_npc():
+    return render_template("views/npc.html", theme=f"{args.theme}")
+
+
+@views.route("/add_sensor", methods=["GET"])
+def add_sensor():
+    return render_template("views/sensor.html", theme=f"{args.theme}")
+
+
+@views.route("/ego_vehicle", methods=["GET"])
+def lego_vehicle():
+    return render_template("views/ego.html", theme=f"{args.theme}")
 
 
 @views.route("/change_weather", methods=["POST"])

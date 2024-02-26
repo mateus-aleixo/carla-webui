@@ -1,7 +1,34 @@
 {% extends "base/base.html" %}
 
-{% block title %} Home {% endblock %}
+{% block theme %} data-bs-theme="{{ theme }}" {% endblock theme %}
+
+{% block title %} Home {% endblock title %}
 
 {% block content %}
-
+<div class="row g-3 text-center" style="margin: auto;">
+    <div class="col-sm-6 mb-2 bg-primary">
+        <a class="d-block pe-lg-4 text-decoration-none lh-sm text-white" href="/load_map">
+            <h4 class="mb-0 fs-5 fw-semibold">Load Maps</h4>
+            <small>The CARLA server normally loads a default map. You can also load a custom map.</small>
+        </a>
+    </div>
+    <div class="col-sm-6 mb-2 bg-secondary">
+        <a class="d-block pe-lg-4 text-decoration-none lh-sm text-white" href="/add_npc">
+            <h4 class="mb-0 fs-5 fw-semibold">Add NPCs</h4>
+            <small>Create a realistic environment with traffic and other non-player characters.</small>
+        </a>
+    </div>
+    <div class="col-sm-6 mb-2 bg-success">
+        <a class="d-block pe-lg-4 text-decoration-none lh-sm text-white" href="/add_sensor">
+            <h4 class="mb-0 fs-5 fw-semibold">Add Sensors</h4>
+            <small>Attach them to a vehicle or a fixed point.</small>
+        </a>
+    </div>
+    <div class="col-sm-6 mb-2 bg-danger">
+        <a class="d-block pe-lg-4 text-decoration-none lh-sm text-white" href="/ego_vehicle">
+            <h4 class="mb-0 fs-5 fw-semibold">Ego Vehicle</h4>
+            <small>A vehicle that will serve as the centerpoint of the simulation.</small>
+        </a>
+    </div>
+</div>
 {% endblock content %}

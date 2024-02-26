@@ -81,9 +81,9 @@ parser.add_argument(
 )
 parser.add_argument(
     "--theme",
-    default="light",
+    default="dark",
     type=str,
-    help="launches the UI with light or dark theme (default: light)",
+    help="launches the UI with light or dark theme (default: dark)",
     metavar="T",
 )
 parser.add_argument(
