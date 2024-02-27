@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" {% block theme %}{% endblock theme %}>
+<html lang="en" id="htmlTheme" {% block theme %}{% endblock theme %}>
 
 <head>
   <title>
@@ -10,7 +10,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="author" content="MateusAleixo" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
   <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon.ico') }}" type="image/x-icon" />
   {% block stylesheets %}{% endblock stylesheets %}
 </head>
@@ -19,12 +19,12 @@
   <header class="navbar navbar-expand-lg bd-navbar sticky-top">
     <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Main navigation">
       <a class="navbar-brand p-0 me-0 me-lg-2" href="/" aria-label="Home">
-        <img src="{{ url_for('static', filename='assets/images/favicon.ico') }}" alt="Logo" style="height: 2.5rem;"
-          title="Home">
+        <img src="{{ url_for('static', filename='assets/images/favicon.ico') }}" alt="Logo" style="height: 2.5rem"
+          title="Home" />
       </a>
 
-      <h1 class="d-none d-lg-block" style="margin: 1rem;">
-        <a href="/" style="text-decoration: none; color: inherit;">CARLA Web UI</a>
+      <h1 class="d-none d-lg-block" style="margin: 1rem">
+        <a href="/" style="text-decoration: none; color: inherit">CARLA Web UI</a>
       </h1>
 
       <div class="offcanvas-lg offcanvas-end flex-grow-1" tabindex="-1" id="bdNavbar"
@@ -33,8 +33,8 @@
           <ul class="navbar-nav flex-row flex-wrap ms-md-auto">
             <li class="nav-item col-6 col-lg-auto">
               <a class="nav-link py-2 px-0 px-lg-2" href="https://github.com/mateus-aleixo/carla-webui" target="_blank"
-                rel="noopener" style="margin-top: 0.25rem;">
-                <svg xmlns="http://www.w3.org/2000/svg" style="height: 2.5rem;" class="navbar-nav-svg"
+                rel="noopener" style="margin-top: 0.25rem">
+                <svg xmlns="http://www.w3.org/2000/svg" style="height: 2.5rem" class="navbar-nav-svg"
                   viewBox="0 0 512 499.36" role="img">
                   <title>GitHub</title>
                   <path fill="currentColor" fill-rule="evenodd"
@@ -49,36 +49,32 @@
               <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"
                 id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static"
                 aria-label="Toggle theme">
-                <img src="
+                <img id="selectedThemeLogo" src="
                               {% if theme == 'dark' %}
                                   {{ url_for('static', filename='assets/images/moon.ico') }}
                               {% else %}
                                   {{ url_for('static', filename='assets/images/sun.ico') }}
                               {% endif %}
-                              " alt="Toggle theme" class="bi my-1 theme-icon-active" style="height: 2.5rem;">
+                              " alt="Toggle theme" class="bi my-1 theme-icon-active" style="height: 2.5rem" />
                 <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
               </button>
 
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
                 <li>
-                  <button type="button" class="dropdown-item d-flex align-items-center 
-                                  {% if theme == 'light' %}
-                                      active
-                                  {% endif %}
-                                  ">
+                  <button id="lightButton" type="button"
+                    class="dropdown-item d-flex align-items-center {% if theme == 'light' %} active {% endif %}"
+                    onclick="changeTheme('light')">
                     <img src="{{ url_for('static', filename='assets/images/sun.ico') }}" alt="Light"
-                      class="bi me-2 opacity-50" style="height: 1.0rem;">
+                      class="bi me-2 opacity-50" style="height: 1rem" />
                     Light
                   </button>
                 </li>
                 <li>
-                  <button type="button" class="dropdown-item d-flex align-items-center 
-                                  {% if theme == 'dark' %}
-                                      active
-                                  {% endif %}
-                                  ">
+                  <button id="darkButton" type="button"
+                    class="dropdown-item d-flex align-items-center {% if theme == 'dark' %} active {% endif %}"
+                    onclick="changeTheme('dark')">
                     <img src="{{ url_for('static', filename='assets/images/moon.ico') }}" alt="Dark"
-                      class="bi me-2 opacity-50" style="height: 1.0rem;">
+                      class="bi me-2 opacity-50" style="height: 1rem" />
                     Dark
                   </button>
                 </li>
@@ -96,6 +92,48 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
     integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
     crossorigin="anonymous"></script>
+  <script>
+    function changeTheme(theme) {
+
+      if (theme === "dark") {
+        document
+          .getElementById("htmlTheme")
+          .setAttribute("data-bs-theme", "dark");
+        document
+          .getElementById("selectedThemeLogo")
+          .setAttribute("src", "{{ url_for('static', filename='assets/images/moon.ico') }}");
+        document
+          .getElementById("darkButton")
+          .classList.add("active");
+        document
+          .getElementById("lightButton")
+          .classList.remove("active");
+      } else {
+        document
+          .getElementById("htmlTheme")
+          .setAttribute("data-bs-theme", "light");
+        document
+          .getElementById("selectedThemeLogo")
+          .setAttribute("src", "{{ url_for('static', filename='assets/images/sun.ico') }}");
+        document
+          .getElementById("lightButton")
+          .classList.add("active");
+        document
+          .getElementById("darkButton")
+          .classList.remove("active");
+      }
+
+      localStorage.setItem("selectedTheme", theme);
+    }
+
+    window.onload = function () {
+      var selectedTheme = localStorage.getItem("selectedTheme");
+
+      if (selectedTheme) {
+        changeTheme(selectedTheme);
+      }
+    };
+  </script>
   {% block javascripts %}{% endblock javascripts %}
 </body>
 
