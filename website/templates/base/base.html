@@ -11,7 +11,7 @@
   <meta name="author" content="MateusAleixo" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-  <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon.ico') }}" type="image/x-icon" />
+  <link rel="icon" href="{{ url_for('static', filename='assets/images/icons/favicon.ico') }}" type="image/x-icon" />
   {% block stylesheets %}{% endblock stylesheets %}
 </head>
 
@@ -19,7 +19,7 @@
   <header class="navbar navbar-expand-lg bd-navbar sticky-top">
     <nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap" aria-label="Main navigation">
       <a class="navbar-brand p-0 me-0 me-lg-2" href="/" aria-label="Home">
-        <img src="{{ url_for('static', filename='assets/images/favicon.ico') }}" alt="Logo" style="height: 2.5rem"
+        <img src="{{ url_for('static', filename='assets/images/icons/favicon.ico') }}" alt="Logo" style="height: 2.5rem"
           title="Home" />
       </a>
 
@@ -51,9 +51,9 @@
                 aria-label="Toggle theme">
                 <img id="selectedThemeLogo" src="
                               {% if theme == 'dark' %}
-                                  {{ url_for('static', filename='assets/images/moon.ico') }}
+                                  {{ url_for('static', filename='assets/images/icons/moon.ico') }}
                               {% else %}
-                                  {{ url_for('static', filename='assets/images/sun.ico') }}
+                                  {{ url_for('static', filename='assets/images/icons/sun.ico') }}
                               {% endif %}
                               " alt="Toggle theme" class="bi my-1 theme-icon-active" style="height: 2.5rem" />
                 <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
@@ -64,7 +64,7 @@
                   <button id="lightButton" type="button"
                     class="dropdown-item d-flex align-items-center {% if theme == 'light' %} active {% endif %}"
                     onclick="changeTheme('light')">
-                    <img src="{{ url_for('static', filename='assets/images/sun.ico') }}" alt="Light"
+                    <img src="{{ url_for('static', filename='assets/images/icons/sun.ico') }}" alt="Light"
                       class="bi me-2 opacity-50" style="height: 1rem" />
                     Light
                   </button>
@@ -73,7 +73,7 @@
                   <button id="darkButton" type="button"
                     class="dropdown-item d-flex align-items-center {% if theme == 'dark' %} active {% endif %}"
                     onclick="changeTheme('dark')">
-                    <img src="{{ url_for('static', filename='assets/images/moon.ico') }}" alt="Dark"
+                    <img src="{{ url_for('static', filename='assets/images/icons/moon.ico') }}" alt="Dark"
                       class="bi me-2 opacity-50" style="height: 1rem" />
                     Dark
                   </button>
@@ -101,7 +101,7 @@
           .setAttribute("data-bs-theme", "dark");
         document
           .getElementById("selectedThemeLogo")
-          .setAttribute("src", "{{ url_for('static', filename='assets/images/moon.ico') }}");
+          .setAttribute("src", "{{ url_for('static', filename='assets/images/icons/moon.ico') }}");
         document
           .getElementById("darkButton")
           .classList.add("active");
@@ -114,7 +114,7 @@
           .setAttribute("data-bs-theme", "light");
         document
           .getElementById("selectedThemeLogo")
-          .setAttribute("src", "{{ url_for('static', filename='assets/images/sun.ico') }}");
+          .setAttribute("src", "{{ url_for('static', filename='assets/images/icons/sun.ico') }}");
         document
           .getElementById("lightButton")
           .classList.add("active");

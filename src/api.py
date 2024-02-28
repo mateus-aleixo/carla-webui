@@ -44,6 +44,22 @@ except Exception as e:
     logging.error(e)
 
 
-def checker():
-    if sim_world is None:
-        raise Exception("World is not initialized")
+def load_map(map_number):
+    print(client.get_available_maps())
+    map_name = f"Town0{map_number}"
+
+    if map_name != sim_world.get_map().name.split("/")[-1]:
+        client.load_world(map_name)
+        logging.info("loaded map Town0%s", map_number)
+    else:
+        logging.info("map Town0%s is already loaded", map_number)
+
+
+def load_default_map():
+    map_name = "Town10HD_Opt"
+
+    if sim_world.get_map().name.split("/")[-1] != map_name:
+        client.load_world(map_name)
+        logging.info("loaded map %s", map_name)
+    else:
+        logging.info("map %s is already loaded", map_name)

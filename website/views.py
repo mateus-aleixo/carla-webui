@@ -52,36 +52,48 @@ def shutdown():
     return render_template("error/page-500.html")
 
 
-@views.route("/load_map", methods=["GET"])
-def load_map():
-    return render_template("views/map.html", theme=f"{args.theme}")
+@views.route("/maps", methods=["GET"])
+def maps():
+    return render_template("views/maps.html", theme=f"{args.theme}")
 
 
-@views.route("/add_npc", methods=["GET"])
-def add_npc():
+@views.route("/npc", methods=["GET"])
+def npc():
     return render_template("views/npc.html", theme=f"{args.theme}")
 
 
-@views.route("/add_sensor", methods=["GET"])
-def add_sensor():
+@views.route("/sensor", methods=["GET"])
+def sensor():
     return render_template("views/sensor.html", theme=f"{args.theme}")
 
 
-@views.route("/ego_vehicle", methods=["GET"])
-def lego_vehicle():
+@views.route("/ego", methods=["GET"])
+def ego():
     return render_template("views/ego.html", theme=f"{args.theme}")
 
 
-@views.route("/change_weather", methods=["POST"])
-def change_weather():
-    from src.api import change_weather
+@views.route("/load_map", methods=["POST"])
+def load_map():
+    from src.api import load_map
 
     try:
-        chosen_number = request.form["chosen_number"]
-        print("chosen_number: ", chosen_number)
-        change_weather(chosen_number)
+        map_number = int(request.form["map_number"])
+        load_map(map_number)
     except Exception as e:
         print("Error: ", e)
         return redirect(url_for("views.shutdown"))
 
-    return route_default()
+    return maps()
+
+
+@views.route("/load_default_map", methods=["POST"])
+def load_default_map():
+    from src.api import load_default_map
+
+    try:
+        load_default_map()
+    except Exception as e:
+        print("Error: ", e)
+        return redirect(url_for("views.shutdown"))
+
+    return maps()

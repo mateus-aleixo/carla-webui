@@ -1,0 +1,61 @@
+{% extends "base/base.html" %}
+
+{% block theme %} data-bs-theme="{{ theme }}" {% endblock theme %}
+
+{% block title %} Load Maps {% endblock title %}
+
+{% block content %}
+<div style="
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    justify-content: center;
+  ">
+    <div>
+        <form action="/load_map" method="POST">
+            <input type="hidden" name="map_number" value="1">
+            <button type="submit" style="border: none; background: none; padding: 0;">
+                <img alt="town_10_slideshow" src="{{ url_for('static', filename='assets/images/maps/town10.webp') }}"
+                    style="max-width: 100%; height: auto;" />
+            </button>
+        </form>
+    </div>
+    <div>
+        <form action="/load_map" method="POST">
+            <input type="hidden" name="map_number" value="2">
+            <button type="submit" style="border: none; background: none; padding: 0;">
+                <img alt="town_10_slideshow" src="{{ url_for('static', filename='assets/images/maps/town10.webp') }}"
+                    style="max-width: 100%; height: auto;" />
+            </button>
+        </form>
+    </div>
+    <div>
+        <form action="/load_map" method="POST">
+            <input type="hidden" name="map_number" value="4">
+            <button type="submit" style="border: none; background: none; padding: 0;">
+                <img alt="town_10_slideshow" src="{{ url_for('static', filename='assets/images/maps/town10.webp') }}"
+                    style="max-width: 100%; height: auto;" />
+            </button>
+        </form>
+    </div>
+    <div>
+        <form action="/load_map" method="POST">
+            <input type="hidden" name="map_number" value="5">
+            <button type="submit" style="border: none; background: none; padding: 0;">
+                <img alt="town_10_slideshow" src="{{ url_for('static', filename='assets/images/maps/town10.webp') }}"
+                    style="max-width: 100%; height: auto;" />
+            </button>
+        </form>
+    </div>
+</div>
+<br>
+<div style="display: flex; justify-content: center;">
+    <form action="/load_map" method="POST">
+        <input type="hidden" name="map_number" value="10">
+        <button type="submit" style="border: none; background: none; padding: 0;">
+            <img alt="town_10_slideshow" src="{{ url_for('static', filename='assets/images/maps/town10.webp') }}"
+                style="max-width: 75%; height: auto; width: 100%;" />
+        </button>
+    </form>
+</div>
+{% endblock content %}
