@@ -17,16 +17,15 @@ parser.add_argument(
     metavar="AP",
 )
 parser.add_argument(
-    "--autolaunch",
+    "--auto-launch",
     action="store_true",
     default=False,
-    help="open the webui URL in the system's default browser upon launch (only if --flask-debug is not set)",
+    help="open the webui URL in the system's default browser upon launch",
 )
 parser.add_argument(
-    "--data-dir",
-    default=os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+    "--carla-dir",
     type=str,
-    help="base path where all user data is stored",
+    help="base path where CARLA is installed",
     metavar="D",
 )
 parser.add_argument(
@@ -37,7 +36,7 @@ parser.add_argument(
 parser.add_argument(
     "--flask-debug",
     action="store_true",
-    help="launch Flask with --debug option",
+    help="launch Flask with --debug option (disables auto-launch of webui and CARLA server)",
 )
 parser.add_argument(
     "--host",
@@ -51,6 +50,11 @@ parser.add_argument(
     type=str,
     help="log level; one of: CRITICAL, ERROR, WARNING, INFO, DEBUG",
     metavar="L",
+)
+parser.add_argument(
+    "--low-quality",
+    action="store_true",
+    help="set quality level to low",
 )
 parser.add_argument(
     "--port",

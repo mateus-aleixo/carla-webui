@@ -6,13 +6,7 @@ from website import create_app
 def main():
     app = create_app()
 
-    with open(".env", "w") as file:
-        file.write(f"HOST={args.host}\n")
-        file.write(f"PORT={args.port}\n")
-        file.write(f"LOGLEVEL={args.loglevel}\n")
-        file.write(f"SYNC={args.sync}\n")
-
-    if args.autolaunch:
+    if args.auto_launch:
         open_new(f"http://{args.app_host}:{args.app_port}")
 
     app.run(host=args.app_host, port=args.app_port, debug=args.flask_debug)

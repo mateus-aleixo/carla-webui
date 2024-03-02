@@ -210,9 +210,24 @@ def prepare_environment():
 
 
 def start():
-    from src import webui
+    from src import server, webui
 
-    print(f"Launching Web UI with arguments: {' '.join(sys.argv[1:])}")
+    server_args = [
+        arg
+        for arg in sys.argv[1:]
+        if arg.startswith("--low-quality")
+        or arg.startswith("--host")
+        or arg.startswith("--port")
+        or arg.startswith("--loglevel")
+        or arg.startswith("--sync")
+    ]
+    webui_args = [arg for arg in sys.argv[1:] if arg not in server_args]
+
+    if not args.flask_debug:
+        print(f"Launching server with arguments: {' '.join(server_args)}")
+        server.main()
+
+    print(f"Launching Web UI with arguments: {' '.join(webui_args)}")
     webui.main()
 
 

@@ -48,7 +48,6 @@ def get_dict():
         "Python": platform.python_version(),
         "Commit": launch.commit_hash(),
         "Script path": paths_internal.script_path,
-        "Data path": paths_internal.data_path,
         "Checksum": checksum_token,
         "Commandline": get_argv(),
         "Exceptions": errors.get_exceptions(),
