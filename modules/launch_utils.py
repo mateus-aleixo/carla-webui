@@ -215,7 +215,8 @@ def start():
     server_args = [
         arg
         for arg in sys.argv[1:]
-        if arg.startswith("--low-quality")
+        if arg.startswith("--skip-server")
+        or arg.startswith("--low-quality")
         or arg.startswith("--host")
         or arg.startswith("--port")
         or arg.startswith("--loglevel")
@@ -223,11 +224,13 @@ def start():
     ]
     webui_args = [arg for arg in sys.argv[1:] if arg not in server_args]
 
-    if not args.flask_debug:
-        print(f"Launching server with arguments: {' '.join(server_args)}")
+    if not args.skip_server:
+        if server_args:
+            print(f"Launching server with arguments: {' '.join(server_args)}")
         server.main()
 
-    print(f"Launching Web UI with arguments: {' '.join(webui_args)}")
+    if webui_args:
+        print(f"Launching Web UI with arguments: {' '.join(webui_args)}")
     webui.main()
 
 

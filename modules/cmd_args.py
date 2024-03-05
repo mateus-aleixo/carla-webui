@@ -79,6 +79,11 @@ parser.add_argument(
     help="launch.py argument: do not check python version",
 )
 parser.add_argument(
+    "--skip-server",
+    action="store_true",
+    help="launch.py argument: skip launching the server",
+)
+parser.add_argument(
     "--sync",
     action="store_true",
     help="syncronous mode execution",

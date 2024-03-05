@@ -21,25 +21,29 @@ def main():
         file.write(f"LOGLEVEL={args.loglevel}\n")
         file.write(f"SYNC={args.sync}\n")
 
-    carla_dir = args.carla_dir
-
-    if not carla_dir:
-        print(
-            "Please provide the path to CARLA directory using the --carla-dir argument"
-        )
-        exit(1)
+    if os.stat("root.txt").st_size != 0:
+        with open("root.txt", "r") as file:
+            carla_dir = file.read().strip()
     else:
-        carla_executable = "CarlaUE4.sh" if os.name == "posix" else "CarlaUE4.exe"
+        carla_dir = args.carla_dir
 
-        carla_path = os.path.abspath(carla_dir)
-
-        if not os.path.exists(carla_path):
-            print(f"Could not find {carla_path}")
+        if not carla_dir:
+            print(
+                "Please provide the path to CARLA directory in root.txt or using the --carla-dir argument"
+            )
             exit(1)
 
-        if carla_executable not in os.listdir(carla_dir):
-            print(f"Could not find {carla_executable} in {carla_dir}")
-            exit(1)
+    carla_executable = "CarlaUE4.sh" if os.name == "posix" else "CarlaUE4.exe"
+
+    carla_path = os.path.abspath(carla_dir)
+
+    if not os.path.exists(carla_path):
+        print(f"Could not find {carla_path}")
+        exit(1)
+
+    if carla_executable not in os.listdir(carla_dir):
+        print(f"Could not find {carla_executable} in {carla_dir}")
+        exit(1)
 
     carla_dir = os.path.join(
         carla_dir,
@@ -53,8 +57,9 @@ def main():
     )
 
     while not running(args.host, args.port):
-        time.sleep(10)
+        time.sleep(1)
 
+    time.sleep(30)
     print("CARLA has started!")
 
 
