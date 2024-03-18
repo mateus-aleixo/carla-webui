@@ -1,7 +1,10 @@
 import carla
+import cv2
 import dotenv
+import glob
 import logging
 import os
+import time
 
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -42,6 +45,39 @@ try:
         traffic_manager.set_synchronous_mode(True)
 except Exception as e:
     logging.error(e)
+
+
+def capture_frame():
+    camera_bp = sim_world.get_blueprint_library().find("sensor.camera.rgb")
+    camera_bp.set_attribute("image_size_x", "640")
+    camera_bp.set_attribute("image_size_y", "480")
+    camera_bp.set_attribute("fov", "90")
+    camera_bp.set_attribute("sensor_tick", "0.1")
+    camera_transform = carla.Transform(
+        carla.Location(x=0.0, y=0.0, z=150.0), carla.Rotation(pitch=-90.0)
+    )
+    camera = sim_world.spawn_actor(camera_bp, camera_transform)
+
+    try:
+        camera.listen(lambda image: image.save_to_disk("out/%06d.png" % image.frame))
+        while len(glob.glob("out/*.png")) < 2:
+            pass
+    except Exception as e:
+        logging.error(e)
+    finally:
+        camera.destroy()
+        time.sleep(0.5)
+        os.remove(max(glob.glob("out/*.png")))
+
+        image = cv2.imread(glob.glob("out/*.png")[0])
+        frame = cv2.imencode(".png", image)[1].tobytes()
+
+        for file in glob.glob("out/*.png"):
+            os.remove(file)
+
+        os.rmdir("out")
+
+        return frame
 
 
 def load_map(map_number):

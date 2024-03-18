@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, Response, redirect, render_template, url_for, request
 from jinja2 import TemplateNotFound
 from launch import args
 
@@ -20,6 +20,14 @@ def get_segment(request):
 @views.route("/", methods=["GET"])
 def route_default():
     return index()
+
+
+def gen_frames():
+    while True:
+        from src.api import capture_frame
+
+        frame = capture_frame()
+        yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
 
 
 @views.route("/index", methods=["GET"])
@@ -97,3 +105,8 @@ def load_default_map():
         return redirect(url_for("views.shutdown"))
 
     return maps()
+
+
+@views.route("/video_feed", methods=["GET"])
+def video_feed():
+    return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")

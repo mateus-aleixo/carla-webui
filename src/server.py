@@ -23,11 +23,11 @@ def main():
 
     if os.stat("root.txt").st_size != 0:
         with open("root.txt", "r") as file:
-            carla_dir = file.read().strip()
+            carla_root = file.read().strip()
     else:
-        carla_dir = args.carla_dir
+        carla_root = args.carla_root
 
-        if not carla_dir:
+        if not carla_root:
             print(
                 "Please provide the path to CARLA directory in root.txt or using the --carla-dir argument"
             )
@@ -35,31 +35,31 @@ def main():
 
     carla_executable = "CarlaUE4.sh" if os.name == "posix" else "CarlaUE4.exe"
 
-    carla_path = os.path.abspath(carla_dir)
+    carla_path = os.path.abspath(carla_root)
 
     if not os.path.exists(carla_path):
         print(f"Could not find {carla_path}")
         exit(1)
 
-    if carla_executable not in os.listdir(carla_dir):
-        print(f"Could not find {carla_executable} in {carla_dir}")
+    if carla_executable not in os.listdir(carla_root):
+        print(f"Could not find {carla_executable} in {carla_root}")
         exit(1)
 
-    carla_dir = os.path.join(
-        carla_dir,
+    carla_root = os.path.join(
+        carla_root,
         carla_executable,
     )
 
     print("Starting CARLA...")
     subprocess.Popen(
-        f"{'bash' if os.name == 'posix' else ''} {carla_dir} {'--quality-level=Low' if args.low_quality else ''}",
+        f"{'bash' if os.name == 'posix' else ''} {carla_root} {'--quality-level=Low' if args.low_quality else ''}",
         shell=True,
     )
 
     while not running(args.host, args.port):
         time.sleep(1)
 
-    time.sleep(30)
+    time.sleep(10)
     print("CARLA has started!")
 
 
