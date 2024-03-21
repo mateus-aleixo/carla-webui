@@ -224,6 +224,12 @@ def start():
     ]
     webui_args = [arg for arg in sys.argv[1:] if arg not in server_args]
 
+    with open(".env", "w") as file:
+        file.write(f"HOST={args.host}\n")
+        file.write(f"PORT={args.port}\n")
+        file.write(f"LOGLEVEL={args.loglevel}\n")
+        file.write(f"SYNC={args.sync}\n")
+
     if not args.skip_server:
         if server_args:
             print(f"Launching server with arguments: {' '.join(server_args)}")

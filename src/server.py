@@ -15,12 +15,6 @@ def running(host, port):
 
 
 def main():
-    with open(".env", "w") as file:
-        file.write(f"HOST={args.host}\n")
-        file.write(f"PORT={args.port}\n")
-        file.write(f"LOGLEVEL={args.loglevel}\n")
-        file.write(f"SYNC={args.sync}\n")
-
     if os.stat("root.txt").st_size != 0:
         with open("root.txt", "r") as file:
             carla_root = file.read().strip()
