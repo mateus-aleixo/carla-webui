@@ -29,6 +29,33 @@ client = None
 traffic_manager = None
 sim_world = None
 
+transforms = {
+    "Town01": [
+        carla.Location(x=200.0, y=165.0, z=240.0),
+        carla.Rotation(pitch=-90.0, roll=90.0),
+    ],
+    "Town02": [
+        carla.Location(x=0.0, y=0.0, z=100.0),
+        carla.Rotation(pitch=-90.0),
+    ],
+    "Town03": [
+        carla.Location(x=0.0, y=0.0, z=100.0),
+        carla.Rotation(pitch=-90.0),
+    ],
+    "Town04": [
+        carla.Location(x=0.0, y=0.0, z=100.0),
+        carla.Rotation(pitch=-90.0),
+    ],
+    "Town05": [
+        carla.Location(x=0.0, y=0.0, z=100.0),
+        carla.Rotation(pitch=-90.0),
+    ],
+    "Town10HD_Opt": [
+        carla.Location(x=0.0, y=35.0, z=160.0),
+        carla.Rotation(pitch=-90.0, roll=-90.0),
+    ],
+}
+
 try:
     client = carla.Client(host, port)
     client.set_timeout(60.0)
@@ -47,15 +74,19 @@ except Exception as e:
     logging.error(e)
 
 
+def get_map_name():
+    return sim_world.get_map().name.split("/")[-1]
+
+
 def capture_frame():
     camera_bp = sim_world.get_blueprint_library().find("sensor.camera.rgb")
     camera_bp.set_attribute("image_size_x", "640")
     camera_bp.set_attribute("image_size_y", "480")
     camera_bp.set_attribute("fov", "90")
     camera_bp.set_attribute("sensor_tick", "0.1")
-    camera_transform = carla.Transform(
-        carla.Location(x=0.0, y=0.0, z=150.0), carla.Rotation(pitch=-90.0)
-    )
+    map_name = get_map_name()
+    transform = transforms[map_name]
+    camera_transform = carla.Transform(transform[0], transform[1])
     camera = sim_world.spawn_actor(camera_bp, camera_transform)
 
     try:
@@ -81,10 +112,13 @@ def capture_frame():
 
 
 def load_map(map_number):
-    print(client.get_available_maps())
+    if map_number == 10:
+        load_default_map()
+        return
+
     map_name = f"Town0{map_number}"
 
-    if map_name != sim_world.get_map().name.split("/")[-1]:
+    if map_name != get_map_name():
         client.load_world(map_name)
         logging.info("loaded map Town0%s", map_number)
     else:
@@ -94,7 +128,7 @@ def load_map(map_number):
 def load_default_map():
     map_name = "Town10HD_Opt"
 
-    if sim_world.get_map().name.split("/")[-1] != map_name:
+    if get_map_name() != map_name:
         client.load_world(map_name)
         logging.info("loaded map %s", map_name)
     else:

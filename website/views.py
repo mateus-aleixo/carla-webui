@@ -60,26 +60,6 @@ def shutdown():
     return render_template("error/page-500.html")
 
 
-@views.route("/maps", methods=["GET"])
-def maps():
-    return render_template("views/maps.html", theme=f"{args.theme}")
-
-
-@views.route("/npc", methods=["GET"])
-def npc():
-    return render_template("views/npc.html", theme=f"{args.theme}")
-
-
-@views.route("/sensor", methods=["GET"])
-def sensor():
-    return render_template("views/sensor.html", theme=f"{args.theme}")
-
-
-@views.route("/ego", methods=["GET"])
-def ego():
-    return render_template("views/ego.html", theme=f"{args.theme}")
-
-
 @views.route("/load_map", methods=["POST"])
 def load_map():
     from src.api import load_map
@@ -91,7 +71,7 @@ def load_map():
         print("Error: ", e)
         return redirect(url_for("views.shutdown"))
 
-    return maps()
+    return route_default()
 
 
 @views.route("/load_default_map", methods=["POST"])
@@ -104,7 +84,7 @@ def load_default_map():
         print("Error: ", e)
         return redirect(url_for("views.shutdown"))
 
-    return maps()
+    return route_default()
 
 
 @views.route("/video_feed", methods=["GET"])

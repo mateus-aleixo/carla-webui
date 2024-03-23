@@ -3,7 +3,7 @@
 
 <head>
   <title>
-    CARLA Web GUI - {% block title %}{% endblock title %} | Mateus Aleixo
+    CARLA Web GUI | Mateus Aleixo
   </title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui" />
@@ -86,9 +86,6 @@
     </nav>
   </header>
   {% block content %}{% endblock content %}
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <img id="liveFrame" src="{{ url_for('views.video_feed') }}" alt="Live CARLA Stream">
-  </div>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
     crossorigin="anonymous"></script>
