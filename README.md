@@ -22,9 +22,9 @@ conda create --name carla python=3.8
 conda activate carla
 ```
 
-2. Install [git](https://git-scm.com/download/win).
-3. Download the carla-webui repository, for example by running `git clone https://github.com/mateus-aleixo/carla-webui.git`.
-4. Run `webui-user.bat` from Windows Explorer as normal, non-administrator, user.
+3. Install [git](https://git-scm.com/download/win).
+4. Download the carla-webui repository, for example by running `git clone https://github.com/mateus-aleixo/carla-webui.git`.
+5. Run `webui-user.bat` from Windows Explorer as normal, non-administrator, user.
 
 ### Automatic Installation on Linux
 
