@@ -14,7 +14,14 @@ A browser interface based on Flask for CARLA.
 
 ### Automatic Installation on Windows
 
-1. Install [Python 3.8.18](https://www.python.org/downloads/release/python-3818/) (newer versions of Python may not support carla), checking "Add Python to PATH".
+1. Download and install [Miniconda](https://docs.anaconda.com/free/miniconda/) or [Anaconda](https://www.anaconda.com/download).
+2. Create and activate conda environment:
+
+```bash
+conda create --name carla python=3.8
+conda activate carla
+```
+
 2. Install [git](https://git-scm.com/download/win).
 3. Download the carla-webui repository, for example by running `git clone https://github.com/mateus-aleixo/carla-webui.git`.
 4. Run `webui-user.bat` from Windows Explorer as normal, non-administrator, user.
