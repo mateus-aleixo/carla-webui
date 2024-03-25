@@ -5,6 +5,7 @@ import glob
 import logging
 import os
 import time
+import subprocess
 
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -78,6 +79,11 @@ def get_map_name():
     return sim_world.get_map().name.split("/")[-1]
 
 
+def delete_files():
+    if os.path.exists("out"):
+        subprocess.run(["rm", "-r", "out"], cwd=os.getcwd())
+
+
 def capture_frame():
     camera_bp = sim_world.get_blueprint_library().find("sensor.camera.rgb")
     camera_bp.set_attribute("image_size_x", "640")
@@ -98,15 +104,14 @@ def capture_frame():
     finally:
         camera.destroy()
         time.sleep(0.5)
-        os.remove(max(glob.glob("out/*.png")))
 
-        image = cv2.imread(glob.glob("out/*.png")[0])
-        frame = cv2.imencode(".png", image)[1].tobytes()
+        images = glob.glob("out/*.png")
 
-        for file in glob.glob("out/*.png"):
-            os.remove(file)
-
-        os.rmdir("out")
+        if images is not None:
+            image = cv2.imread(images[0])
+            frame = cv2.imencode(".png", image)[1].tobytes()
+        else:
+            frame = None
 
         return frame
 
@@ -133,3 +138,32 @@ def load_default_map():
         logging.info("loaded map %s", map_name)
     else:
         logging.info("map %s is already loaded", map_name)
+
+
+def load_weather(weather_number):
+    weathers = [
+        "Default",
+        "ClearNoon",
+        "CloudyNoon",
+        "WetNoon",
+        "WetCloudyNoon",
+        "MidRainyNoon",
+        "HardRainNoon",
+        "SoftRainNoon",
+        "ClearSunset",
+        "CloudySunset",
+        "WetSunset",
+        "WetCloudySunset",
+        "MidRainSunset",
+        "HardRainSunset",
+        "SoftRainSunset",
+    ]
+
+    weather = weathers[int(weather_number)]
+
+    if not hasattr(carla.WeatherParameters, weather):
+        logging.error("weather %r not found" % weather)
+        return
+    else:
+        sim_world.set_weather(getattr(carla.WeatherParameters, weather))
+        logging.info("set weather to %r" % weather)

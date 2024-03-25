@@ -1,6 +1,3 @@
-import os
-import glob
-
 from flask import Blueprint, Response, redirect, render_template, url_for, request
 from jinja2 import TemplateNotFound
 from launch import args
@@ -30,6 +27,10 @@ def gen_frames():
         from src.api import capture_frame
 
         frame = capture_frame()
+
+        if frame is None:
+            break
+
         yield (b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
 
 
@@ -60,38 +61,33 @@ def route_template(template):
 
 @views.route("/shutdown", methods=["GET"])
 def shutdown():
-    if os.path.exists("out"):
-        for file in glob.glob("out/*.png"):
-            os.remove(file)
-
-        os.rmdir("out")
-
     return render_template("error/page-500.html")
 
 
 @views.route("/load_map", methods=["POST"])
 def load_map():
-    from src.api import load_map
+    from src.api import load_map, delete_files
 
     try:
         map_number = int(request.form["map_number"])
         load_map(map_number)
     except Exception as e:
         print("Error: ", e)
-        return redirect(url_for("views.shutdown"))
+        delete_files()
 
     return route_default()
 
 
-@views.route("/load_default_map", methods=["POST"])
-def load_default_map():
-    from src.api import load_default_map
+@views.route("/load_weather", methods=["POST"])
+def load_weather():
+    from src.api import load_weather, delete_files
 
     try:
-        load_default_map()
+        weather_number = request.form["weather_number"]
+        load_weather(weather_number)
     except Exception as e:
         print("Error: ", e)
-        return redirect(url_for("views.shutdown"))
+        delete_files()
 
     return route_default()
 

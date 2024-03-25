@@ -21,6 +21,37 @@
         </ul>
     </form>
 </div>
+<div class="dropdown">
+    <form action="/load_weather" method="POST">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Change Weather
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="1">Clear Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="2">Cloudy Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="3">Wet Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="4">Wet Cloudy Noon</button>
+            </li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="5">Mid Rainy Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="6">Hard Rain Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="7">Soft Rain Noon</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="8">Clear Sunset</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="9">Cloudy Sunset</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="10">Wet Sunset</button></li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="11">Wet Cloudy Sunset</button>
+            </li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="12">Mid Rain Sunset</button>
+            </li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="13">Hard Rain Sunset</button>
+            </li>
+            <li><button class="dropdown-item" type="submit" name="weather_number" value="14">Soft Rain Sunset</button>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><button class="dropdown-item" type="submit" name="map_number" value="0">Default</button></li>
+        </ul>
+    </form>
+</div>
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
     <img id="liveFrame" src="{{ url_for('views.video_feed') }}" onerror="window.location.href = 'shutdown';">
 </div>
