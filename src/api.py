@@ -35,16 +35,16 @@ transforms = {
         carla.Rotation(pitch=-90.0, roll=90.0),
     ],
     "Town02": [
-        carla.Location(x=0.0, y=0.0, z=100.0),
-        carla.Rotation(pitch=-90.0),
+        carla.Location(x=50.0, y=0.0, z=200.0),
+        carla.Rotation(pitch=-90.0, roll=90.0),
     ],
     "Town03": [
         carla.Location(x=0.0, y=0.0, z=100.0),
         carla.Rotation(pitch=-90.0),
     ],
     "Town04": [
-        carla.Location(x=0.0, y=0.0, z=100.0),
-        carla.Rotation(pitch=-90.0),
+        carla.Location(x=-50.0, y=0.0, z=550.0),
+        carla.Rotation(pitch=-90.0, roll=-90.0),
     ],
     "Town05": [
         carla.Location(x=0.0, y=0.0, z=100.0),

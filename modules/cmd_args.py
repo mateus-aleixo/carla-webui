@@ -41,7 +41,7 @@ parser.add_argument(
 parser.add_argument(
     "--host",
     default="localhost",
-    help="IP of the host server (default: localhost)",
+    help="IP of the host CARLA Simulator (default: localhost)",
     metavar="H",
 )
 parser.add_argument(
@@ -60,7 +60,7 @@ parser.add_argument(
     "--port",
     default=2000,
     type=int,
-    help="TCP port to listen to (default: 2000)",
+    help="TCP port of CARLA Simulator (default: 2000)",
     metavar="P",
 )
 parser.add_argument(

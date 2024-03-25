@@ -1,3 +1,6 @@
+import os
+import glob
+
 from flask import Blueprint, Response, redirect, render_template, url_for, request
 from jinja2 import TemplateNotFound
 from launch import args
@@ -57,6 +60,12 @@ def route_template(template):
 
 @views.route("/shutdown", methods=["GET"])
 def shutdown():
+    if os.path.exists("out"):
+        for file in glob.glob("out/*.png"):
+            os.remove(file)
+
+        os.rmdir("out")
+
     return render_template("error/page-500.html")
 
 
