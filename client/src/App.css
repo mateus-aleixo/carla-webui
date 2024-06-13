@@ -1,0 +1,60 @@
+main {
+  height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+}
+
+.header {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.body {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: row;
+  height: 80%;
+}
+
+.left-controls,
+.right-controls {
+  width: 25%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.middle {
+  width: 50%;
+}
+
+.world-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.carla-image img {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
+.footer {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
