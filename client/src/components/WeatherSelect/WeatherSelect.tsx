@@ -36,7 +36,7 @@ export default function WeatherSelect() {
         <Alert severity="error">Failed to set weather, please try again.</Alert>
       )}
       <FormControl fullWidth>
-        <InputLabel>Weather</InputLabel>
+        <InputLabel>Select Weather</InputLabel>
         <Select value={weather} label="weather" onChange={handleChange}>
           <MenuItem value={"Default"}>Default</MenuItem>
           <MenuItem value={"ClearNoon"}>Clear Noon</MenuItem>

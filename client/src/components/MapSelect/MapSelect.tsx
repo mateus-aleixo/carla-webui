@@ -36,7 +36,7 @@ export default function MapSelect() {
         <Alert severity="error">Failed to set map, please try again.</Alert>
       )}
       <FormControl fullWidth>
-        <InputLabel>Map</InputLabel>
+        <InputLabel>Select Map</InputLabel>
         <Select value={map} label="map" onChange={handleChange}>
           <MenuItem value={"Town10HD_Opt"}>Default</MenuItem>
           <MenuItem value={"Town01_Opt"}>Town01</MenuItem>
