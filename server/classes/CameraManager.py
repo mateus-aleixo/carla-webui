@@ -10,7 +10,7 @@ class CameraManager(object):
     def __init__(self, parent_actor):
         """Constructor method"""
         self.sensor = None
-        self.array = None
+        self.image = None
         self._parent = parent_actor
         self.recording = False
 
@@ -93,11 +93,6 @@ class CameraManager(object):
 
         self.index = None
 
-    def toggle_camera(self):
-        """Activate a camera"""
-        self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
-        self.set_sensor(self.index, force_respawn=True)
-
     def set_sensor(self, index, force_respawn=False):
         """Set a sensor"""
         index = index % len(self.sensors)
@@ -111,7 +106,7 @@ class CameraManager(object):
         if needs_respawn:
             if self.sensor is not None:
                 self.sensor.destroy()
-                self.array = None
+                self.image = None
             self.sensor = self._parent.get_world().spawn_actor(
                 self.sensors[index][-1],
                 self._camera_transforms[self.transform_index][0],
@@ -128,13 +123,9 @@ class CameraManager(object):
 
         self.index = index
 
-    def next_sensor(self):
-        """Get the next sensor"""
-        self.set_sensor(self.index + 1)
-
-    def toggle_recording(self):
-        """Toggle recording on or off"""
-        self.recording = not self.recording
+    def get_camera_image(self):
+        """Get camera image"""
+        return self.image
 
     @staticmethod
     def _parse_image(weak_self, image):
@@ -153,13 +144,13 @@ class CameraManager(object):
             lidar_img_size = (1280, 720, 3)
             lidar_img = np.zeros(lidar_img_size)
             lidar_img[tuple(lidar_data.T)] = (255, 255, 255)
-            self.array = lidar_img
+            self.image = lidar_img
         else:
             image.convert(self.sensors[self.index][1])
             array = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
             array = np.reshape(array, (image.height, image.width, 4))
             array = array[:, :, :3]
             array = array[:, :, ::-1]
-            self.array = array.swapaxes(0, 1)
+            self.image = array
         if self.recording:
             image.save_to_disk("_out/%08d" % image.frame)

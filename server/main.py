@@ -1,7 +1,7 @@
+from api.routes import create_api
 from flask import Flask
 from flask_caching import Cache
 from flask_cors import CORS
-from routes import create_api
 
 
 """Main entry point for the server application."""

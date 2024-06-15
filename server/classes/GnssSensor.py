@@ -26,6 +26,10 @@ class GnssSensor(object):
         weak_self = weakref.ref(self)
         self.sensor.listen(lambda event: GnssSensor._on_gnss_event(weak_self, event))
 
+    def get_data(self):
+        """Get data method"""
+        return {"lat": self.lat, "lon": self.lon}
+
     @staticmethod
     def _on_gnss_event(weak_self, event):
         """GNSS method"""

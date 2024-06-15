@@ -1,9 +1,11 @@
+import base64
 import carla
-from classes.agents.BehaviorAgent import BehaviorAgent
 from classes.World import World
 from flask import Blueprint, jsonify, request
-from functions.global_functions import get_map_name
+from functions.global_functions import get_map_name, has_ego_vehicle
+import io
 import logging
+import matplotlib.pyplot as plt
 import random
 
 # DONT DELETE ROUTE BELOW
@@ -33,11 +35,10 @@ import random
 
 
 world = None
-agent = None
 
 
 def create_api(cache):
-    global world, agent
+    global world
     api = Blueprint("api", __name__)
 
     log = logging.getLogger("werkzeug")
@@ -46,11 +47,11 @@ def create_api(cache):
     client = carla.Client("localhost", 2000)
     client.set_timeout(60.0)
     world = World(client.get_world())
-    agent = None
 
     @api.route("/world_info", methods=["GET"])
     @cache.cached(timeout=60)
     def world_info():
+        """Get the world information from the CARLA world."""
         weather = world.world.get_weather()
         actors = world.world.get_actors()
         return jsonify(
@@ -65,6 +66,7 @@ def create_api(cache):
     @api.route("/map_info", methods=["GET"])
     @cache.cached(timeout=60)
     def map_info():
+        """Get the map information from the CARLA world."""
         spawn_points = [
             [sp.location.x, sp.location.y] for sp in world.map.get_spawn_points()
         ]
@@ -84,8 +86,41 @@ def create_api(cache):
             }
         )
 
+    @api.route("/ego/sensors", methods=["GET"])
+    def ego_sensors():
+        """Get the sensor data from the ego vehicle."""
+        ego_vehicle = has_ego_vehicle(world.world)
+
+        if not ego_vehicle:
+            return jsonify({"error": "ego vehicle not found"}), 404
+
+        collision_sensor = world.collision_sensor
+        gnss_sensor = world.gnss_sensor
+        camera_manager = world.camera_manager
+
+        if collision_sensor is None or gnss_sensor is None or camera_manager is None:
+            return jsonify({"error": "sensors not found"}), 404
+
+        collision_history = collision_sensor.get_collision_history()
+        gnss_data = gnss_sensor.get_data()
+        camera_image = camera_manager.get_camera_image()
+
+        buf = io.BytesIO()
+        plt.imsave(buf, camera_image, format="png")
+        image_data = buf.getvalue()
+        image = base64.b64encode(image_data).decode("utf-8")
+
+        return jsonify(
+            {
+                "collision_history": collision_history,
+                "gnss_data": gnss_data,
+                "image": image,
+            }
+        )
+
     @api.route("/weather", methods=["POST"])
     def set_weather():
+        """Set the weather in the CARLA world."""
         weather = request.json.get("weather")
         if not hasattr(carla.WeatherParameters, weather):
             return jsonify({"error": f"weather {weather} not found"}), 400
@@ -95,6 +130,7 @@ def create_api(cache):
 
     @api.route("/map", methods=["POST"])
     def set_map():
+        """Load a new map in the CARLA world."""
         global world
         map_name = request.json.get("map")
         if map_name == get_map_name(world.world):
@@ -148,36 +184,20 @@ def create_api(cache):
 
     @api.route("/ego/add", methods=["POST"])
     def add_ego():
-        global agent
+        """Add an ego vehicle to the CARLA world."""
         ego_vehicle = request.json.get("ego")
         world.spawn_ego(ego_vehicle)
-        agent = BehaviorAgent(world.player)
-        destination = random.choice(world.map.get_spawn_points()).location
-        agent.set_destination(destination)
         return jsonify({"success": "ego vehicle added"})
 
     @api.route("/ego/remove", methods=["DELETE"])
     def remove_ego():
-        global agent
+        """Remove the ego vehicle from the CARLA world."""
         world.destroy()
-        agent = None
         return jsonify({"success": "ego vehicle removed"})
-
-    @api.route("/ego/done", methods=["GET"])
-    def check_done():
-        global agent
-        if agent is None:
-            return jsonify({"error": "agent not found"}), 404
-        if agent.done():
-            destination = random.choice(world.map.get_spawn_points()).location
-            agent.set_destination(destination)
-            return jsonify({"done": True})
-        else:
-            agent.run_step()
-            return jsonify({"done": False})
 
     @api.route("/random/vehicle/add", methods=["POST"])
     def add_random_vehicle():
+        """Add a random vehicle to the CARLA world."""
         random_vehicle_bp = random.choice(
             world.world.get_blueprint_library().filter("vehicle.*")
         )
@@ -186,7 +206,10 @@ def create_api(cache):
         if spawn_points:
             random.shuffle(spawn_points)
             random_transform = spawn_points[0]
-            world.world.spawn_actor(random_vehicle_bp, random_transform)
+            random_vehicle = world.world.try_spawn_actor(
+                random_vehicle_bp, random_transform
+            )
+            random_vehicle.set_autopilot(True)
             return jsonify({"success": "random vehicle added"})
         else:
             logging.warning("No spawn points found")
@@ -194,6 +217,7 @@ def create_api(cache):
 
     @api.route("/random/vehicle/remove", methods=["DELETE"])
     def remove_random_vehicle():
+        """Remove all random vehicles from the CARLA world."""
         random_vehicles = [
             actor
             for actor in world.world.get_actors()
@@ -205,6 +229,7 @@ def create_api(cache):
 
     @api.route("/destroy/all", methods=["DELETE"])
     def destroy_all():
+        """Destroy all actors in the CARLA world."""
         for actor in world.world.get_actors():
             actor.destroy()
         return jsonify({"success": "all actors destroyed"})

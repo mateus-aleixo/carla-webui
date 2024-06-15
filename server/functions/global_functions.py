@@ -44,3 +44,12 @@ def get_actor_blueprints(world, filter, generation):
     except:
         print("Warning! Actor Generation is not valid. No actor will be spawned.")
         return []
+
+
+def has_ego_vehicle(world):
+    """Method to check if ego vehicle exists"""
+    for actor in world.get_actors().filter("vehicle.*"):
+        if actor.attributes.get("role_name") == "ego_vehicle":
+            return True
+
+    return False

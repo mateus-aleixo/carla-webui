@@ -21,8 +21,20 @@ interface Point {
   y: number;
 }
 
+interface MapInfo {
+  size: number[];
+  spawn_points: Point[];
+  actor_locations: Point[];
+}
+
+interface Sensors {
+  collision_history: { [key: string]: number };
+  gnss_data: { [key: string]: number };
+  image: string;
+}
+
 function App() {
-  const [mapInfo, setMapInfo] = useState({
+  const [mapInfo, setMapInfo] = useState<MapInfo>({
     size: [] as number[],
     spawn_points: [] as Point[],
     actor_locations: [] as Point[],
@@ -35,6 +47,12 @@ function App() {
     wind_intensity: 0,
     num_actors: 0,
   });
+  const [sensors, setSensors] = useState<Sensors>({
+    collision_history: {},
+    gnss_data: {},
+    image: "",
+  });
+  const [hasEgo, setHasEgo] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -63,6 +81,26 @@ function App() {
     });
   };
 
+  const fetchSensors = async () => {
+    const res = await fetch(`${baseUrl}/api/carla/ego/sensors`, {
+      method: "GET",
+    });
+
+    const { error, collision_history, gnss_data, image } = await res.json();
+
+    if (error) {
+      setHasEgo(false);
+    } else {
+      setHasEgo(true);
+    }
+
+    setSensors({
+      collision_history,
+      gnss_data,
+      image,
+    });
+  };
+
   const removeAllActors = async () => {
     const res = await fetch(`${baseUrl}/api/carla/destroy/all`, {
       method: "DELETE",
@@ -74,13 +112,20 @@ function App() {
   useEffect(() => {
     fetchWorldInfo();
     fetchMapInfo();
+    fetchSensors();
   }, []);
 
   useEffect(() => {
     if (canvasRef.current && mapInfo.spawn_points.length > 0) {
       const ctx = canvasRef.current;
-      const spawnPointsData = mapInfo.spawn_points.map((point) => ({ x: point.x, y: point.y }));
-      const actorLocationsData = mapInfo.actor_locations.map((location) => ({ x: location.x, y: location.y }));
+      const spawnPointsData = mapInfo.spawn_points.map((point) => ({
+        x: point.x,
+        y: point.y,
+      }));
+      const actorLocationsData = mapInfo.actor_locations.map((location) => ({
+        x: location.x,
+        y: location.y,
+      }));
 
       if (!chart) {
         const newChart = new Chart(ctx, {
@@ -106,11 +151,11 @@ function App() {
           options: {
             scales: {
               x: {
-                type: 'linear',
-                position: 'bottom',
+                type: "linear",
+                position: "bottom",
                 title: {
                   display: true,
-                  text: 'X Coordinate',
+                  text: "X Coordinate",
                 },
                 min: 0,
                 max: mapInfo.size[0],
@@ -118,7 +163,7 @@ function App() {
               y: {
                 title: {
                   display: true,
-                  text: 'Y Coordinate',
+                  text: "Y Coordinate",
                 },
                 min: 0,
                 max: mapInfo.size[1],
@@ -156,6 +201,18 @@ function App() {
           </div>
           <div className="map-graph">
             <canvas ref={canvasRef}></canvas>
+          </div>
+          <div className="ego-sensors">
+            {hasEgo && (
+              <>
+                <h2>Ego Sensors</h2>
+                <p>
+                  Collision History: {JSON.stringify(sensors.collision_history)}
+                </p>
+                <p>GNSS Data: {JSON.stringify(sensors.gnss_data)}</p>
+                <img src={`data:image/png;base64,${sensors.image}`} />
+              </>
+            )}
           </div>
         </div>
         <div className="right-controls">

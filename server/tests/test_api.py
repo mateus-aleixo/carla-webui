@@ -1,10 +1,10 @@
+from api.routes import create_api
 from flask import Flask
 from flask_caching import Cache
 import pytest
-from routes import create_api
 
 
-"""Tests for the CARLA server API."""
+"""Tests for the API."""
 
 
 @pytest.fixture
@@ -91,12 +91,13 @@ def test_remove_ego(client):
     assert "success" in data
 
 
-def test_check_done(client):
-    client.post("/api/carla/ego/add", json={"ego": "vehicle.audi.tt"})
-    response = client.get("/api/carla/ego/done")
+def test_get_ego_sensors(client):
+    response = client.get("/api/carla/ego/sensors")
     assert response.status_code == 200
     data = response.get_json()
-    assert "done" in data or "error" in data
+    assert "colision_history" in data
+    assert "gnss_data" in data
+    assert "image" in data
 
 
 def test_add_random_vehicle(client):

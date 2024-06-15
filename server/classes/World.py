@@ -60,7 +60,7 @@ class World(object):
         else:
             blueprint = self.world.get_blueprint_library().find(ego)
 
-        blueprint.set_attribute("role_name", "ego")
+        blueprint.set_attribute("role_name", "ego_vehicle")
 
         if blueprint.has_attribute("color"):
             color = random.choice(blueprint.get_attribute("color").recommended_values)
@@ -97,6 +97,9 @@ class World(object):
         self.camera_manager = CameraManager(self.player)
         self.camera_manager.transform_index = cam_pos_id
         self.camera_manager.set_sensor(cam_index)
+
+        # Set the player's autopilot.
+        self.player.set_autopilot(True)
 
     def next_weather(self, reverse=False):
         """Get next weather setting"""
