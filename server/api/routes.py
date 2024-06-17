@@ -126,7 +126,7 @@ def create_api(cache):
             return jsonify({"error": f"weather {weather} not found"}), 400
         world.world.set_weather(getattr(carla.WeatherParameters, weather))
         cache.clear()  # Clear cache after setting new weather
-        return jsonify({"success": f"weather set to {weather}"})
+        return jsonify({"success": f"weather set to {weather}"}), 200
 
     @api.route("/map", methods=["POST"])
     def set_map():
@@ -137,7 +137,7 @@ def create_api(cache):
             return jsonify({"error": f"map {map_name} is already loaded"}), 400
         world = World(client.load_world(map_name))
         cache.clear()  # Clear cache after loading new map
-        return jsonify({"success": f"map {map_name} loaded"})
+        return jsonify({"success": f"map {map_name} loaded"}), 200
 
     @api.route("/layers", methods=["POST"])
     def set_layers():
@@ -161,14 +161,14 @@ def create_api(cache):
                 world.world.load_map_layer(
                     carla.MapLayer(getattr(carla.MapLayer, layer))
                 )
-            return jsonify({"success": "all layers loaded"})
+            return jsonify({"success": "all layers loaded"}), 200
 
         if layer_states.get("NONE"):
             for layer in layers:
                 world.world.unload_map_layer(
                     carla.MapLayer(getattr(carla.MapLayer, layer))
                 )
-            return jsonify({"success": "all layers unloaded"})
+            return jsonify({"success": "all layers unloaded"}), 200
 
         for layer in layers:
             if layer_states.get(layer):
@@ -180,20 +180,20 @@ def create_api(cache):
                     carla.MapLayer(getattr(carla.MapLayer, layer))
                 )
 
-        return jsonify({"success": "layers updated"})
+        return jsonify({"success": "layers updated"}), 200
 
     @api.route("/ego/add", methods=["POST"])
     def add_ego():
         """Add an ego vehicle to the CARLA world."""
         ego_vehicle = request.json.get("ego")
         world.spawn_ego(ego_vehicle)
-        return jsonify({"success": "ego vehicle added"})
+        return jsonify({"success": "ego vehicle added"}), 200
 
     @api.route("/ego/remove", methods=["DELETE"])
     def remove_ego():
         """Remove the ego vehicle from the CARLA world."""
         world.destroy()
-        return jsonify({"success": "ego vehicle removed"})
+        return jsonify({"success": "ego vehicle removed"}), 200
 
     @api.route("/random/vehicle/add", methods=["POST"])
     def add_random_vehicle():
@@ -209,8 +209,13 @@ def create_api(cache):
             random_vehicle = world.world.try_spawn_actor(
                 random_vehicle_bp, random_transform
             )
-            random_vehicle.set_autopilot(True)
-            return jsonify({"success": "random vehicle added"})
+
+            if random_vehicle is None:
+                logging.warning("Random vehicle could not be spawned")
+                return jsonify({"error": "random vehicle could not be spawned"}), 400
+            else:
+                random_vehicle.set_autopilot(True)
+                return jsonify({"success": "random vehicle added"}), 200
         else:
             logging.warning("No spawn points found")
             return jsonify({"error": "no spawn points found"}), 404
@@ -225,13 +230,50 @@ def create_api(cache):
         ]
         for vehicle in random_vehicles:
             vehicle.destroy()
-        return jsonify({"success": "random vehicles removed"})
+        return jsonify({"success": "random vehicles removed"}), 200
+
+    @api.route("/random/vehicles", methods=["POST"])
+    def n_random_vehicles():
+        """Add or remove random vehicles from the CARLA world."""
+        num_vehicles = request.json.get("num_vehicles")
+        random_vehicles = [
+            actor
+            for actor in world.world.get_actors()
+            if actor.attributes.get("role_name") == "random_vehicle"
+        ]
+        n = len(random_vehicles)
+        dif = num_vehicles - n
+        vehicles_spawned = 0
+
+        if dif > 0:
+            for _ in range(dif):
+                _, status_code = add_random_vehicle()
+
+                if status_code != 200:
+                    return (
+                        jsonify(
+                            {
+                                "error": f"random vehicle could not be spawned, {vehicles_spawned} vehicles added"
+                            }
+                        ),
+                        status_code,
+                    )
+                else:
+                    vehicles_spawned += 1
+
+            return jsonify({"success": f"{dif} random vehicles added"}), 200
+        elif dif < 0:
+            for random_vehicle in random_vehicles[dif:]:
+                random_vehicle.destroy()
+            return jsonify({"success": f"{-dif} random vehicles removed"}), 200
+        else:
+            return jsonify({"success": "no changes"}), 200
 
     @api.route("/destroy/all", methods=["DELETE"])
     def destroy_all():
         """Destroy all actors in the CARLA world."""
         for actor in world.world.get_actors():
             actor.destroy()
-        return jsonify({"success": "all actors destroyed"})
+        return jsonify({"success": "all actors destroyed"}), 200
 
     return api

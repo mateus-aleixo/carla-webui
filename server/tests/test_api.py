@@ -83,14 +83,6 @@ def test_add_ego(client):
     assert "success" in data
 
 
-def test_remove_ego(client):
-    client.post("/api/carla/ego/add", json={"ego": "vehicle.audi.tt"})
-    response = client.delete("/api/carla/ego/remove")
-    assert response.status_code == 200
-    data = response.get_json()
-    assert "success" in data
-
-
 def test_get_ego_sensors(client):
     response = client.get("/api/carla/ego/sensors")
     assert response.status_code == 200
@@ -98,6 +90,14 @@ def test_get_ego_sensors(client):
     assert "colision_history" in data
     assert "gnss_data" in data
     assert "image" in data
+
+
+def test_remove_ego(client):
+    client.post("/api/carla/ego/add", json={"ego": "vehicle.audi.tt"})
+    response = client.delete("/api/carla/ego/remove")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "success" in data
 
 
 def test_add_random_vehicle(client):
@@ -112,6 +112,13 @@ def test_add_random_vehicle(client):
 def test_remove_random_vehicle(client):
     client.post("/api/carla/random/vehicle/add")
     response = client.delete("/api/carla/random/vehicle/remove")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "success" in data
+
+
+def test_n_vehicles(client):
+    response = client.post("/api/carla/random/vehicles", json={"num_vehicles": 5})
     assert response.status_code == 200
     data = response.get_json()
     assert "success" in data
