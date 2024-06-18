@@ -8,27 +8,22 @@ import EgoButtonGroup from "./components/EgoButtonGroup/EgoButtonGroup";
 import RandomButtonGroup from "./components/RandomButtonGroup/RandomButtonGroup";
 import { Alert, Button } from "@mui/material";
 import Chart from "chart.js/auto";
+import VehiclesNumberInput from "./components/VehiclesNumberInput/VehiclesNumberInput";
 
 interface WorldInfo {
   map: string;
   precipitation: number;
   wind_intensity: number;
-  num_actors: number;
-}
-
-interface Point {
-  x: number;
-  y: number;
+  num_vehicles: number;
 }
 
 interface MapInfo {
   size: number[];
-  spawn_points: Point[];
-  actor_locations: Point[];
+  spawn_points: number[][];
+  actor_locations: number[][];
 }
 
 interface Sensors {
-  collision_history: { [key: string]: number };
   gnss_data: { [key: string]: number };
   image: string;
 }
@@ -36,8 +31,8 @@ interface Sensors {
 function App() {
   const [mapInfo, setMapInfo] = useState<MapInfo>({
     size: [] as number[],
-    spawn_points: [] as Point[],
-    actor_locations: [] as Point[],
+    spawn_points: [] as number[][],
+    actor_locations: [] as number[][],
   });
   const [chart, setChart] = useState<Chart | null>(null);
   const [alert, setAlert] = useState(false);
@@ -45,14 +40,14 @@ function App() {
     map: "Town10",
     precipitation: 0,
     wind_intensity: 0,
-    num_actors: 0,
+    num_vehicles: 0,
   });
   const [sensors, setSensors] = useState<Sensors>({
-    collision_history: {},
     gnss_data: {},
     image: "",
   });
   const [hasEgo, setHasEgo] = useState(false);
+  const [loadingInfo, setLoadingInfo] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -60,25 +55,30 @@ function App() {
     const res = await fetch(`${baseUrl}/api/carla/world_info`, {
       method: "GET",
     });
-    const { map, precipitation, wind_intensity, num_actors } = await res.json();
+    const { map, precipitation, wind_intensity, num_vehicles } =
+      await res.json();
     setWorldInfo({
       map: map.slice(0, 6),
       precipitation,
       wind_intensity,
-      num_actors,
+      num_vehicles,
     });
+  };
+
+  const fetchVehicleLocations = async () => {
+    const res = await fetch(`${baseUrl}/api/carla/vehicles`, {
+      method: "GET",
+    });
+    const { actor_locations } = await res.json();
+    setMapInfo((prev) => ({ ...prev, actor_locations }));
   };
 
   const fetchMapInfo = async () => {
     const res = await fetch(`${baseUrl}/api/carla/map_info`, {
       method: "GET",
     });
-    const { size, spawn_points, actor_locations } = await res.json();
-    setMapInfo({
-      size,
-      spawn_points,
-      actor_locations,
-    });
+    const { size, spawn_points } = await res.json();
+    setMapInfo((prev) => ({ ...prev, size, spawn_points }));
   };
 
   const fetchSensors = async () => {
@@ -86,7 +86,7 @@ function App() {
       method: "GET",
     });
 
-    const { error, collision_history, gnss_data, image } = await res.json();
+    const { error, gnss_data, image } = await res.json();
 
     if (error) {
       setHasEgo(false);
@@ -95,7 +95,6 @@ function App() {
     }
 
     setSensors({
-      collision_history,
       gnss_data,
       image,
     });
@@ -109,22 +108,44 @@ function App() {
     setAlert(error || !success);
   };
 
+  const checkIfEgoExists = async () => {
+    const res = await fetch(`${baseUrl}/api/carla/ego/vehicle`, {
+      method: "GET",
+    });
+    const { has_ego } = await res.json();
+    setHasEgo(has_ego);
+  };
+
   useEffect(() => {
-    fetchWorldInfo();
-    fetchMapInfo();
-    fetchSensors();
-  }, []);
+    if (!loadingInfo) {
+      setLoadingInfo(true);
+
+      if (hasEgo) {
+        Promise.all([
+          fetchWorldInfo(),
+          fetchVehicleLocations(),
+          fetchSensors(),
+        ]).finally(() => {
+          setLoadingInfo(false);
+        });
+      } else {
+        Promise.all([fetchWorldInfo(), fetchVehicleLocations()]).finally(() => {
+          setLoadingInfo(false);
+        });
+      }
+    }
+  }, [loadingInfo, hasEgo]);
 
   useEffect(() => {
     if (canvasRef.current && mapInfo.spawn_points.length > 0) {
       const ctx = canvasRef.current;
       const spawnPointsData = mapInfo.spawn_points.map((point) => ({
-        x: point.x,
-        y: point.y,
+        x: point[0],
+        y: point[1],
       }));
       const actorLocationsData = mapInfo.actor_locations.map((location) => ({
-        x: location.x,
-        y: location.y,
+        x: location[0],
+        y: location[1],
       }));
 
       if (!chart) {
@@ -151,22 +172,31 @@ function App() {
           options: {
             scales: {
               x: {
-                type: "linear",
-                position: "bottom",
-                title: {
-                  display: true,
-                  text: "X Coordinate",
-                },
-                min: 0,
-                max: mapInfo.size[0],
+                display: false,
               },
               y: {
-                title: {
-                  display: true,
-                  text: "Y Coordinate",
-                },
-                min: 0,
-                max: mapInfo.size[1],
+                display: false,
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                enabled: false,
+              },
+            },
+            elements: {
+              point: {
+                radius: 5,
+              },
+            },
+            layout: {
+              padding: {
+                top: 10,
+                right: 10,
+                bottom: 10,
+                left: 10,
               },
             },
           },
@@ -180,6 +210,11 @@ function App() {
     }
   }, [mapInfo, chart]);
 
+  useEffect(() => {
+    checkIfEgoExists();
+    fetchMapInfo();
+  }, []);
+
   return (
     <main>
       <div className="header">
@@ -187,38 +222,42 @@ function App() {
       </div>
       <div className="body">
         <div className="left-controls">
-          <WeatherSelect />
-          <MapSelect />
-          <RemoveLayers />
-        </div>
-        <div className="middle">
           <div className="world-info">
             <h2>World Info</h2>
             <p>Map: {worldInfo.map}</p>
             <p>Precipitation: {worldInfo.precipitation}</p>
             <p>Wind Intensity: {worldInfo.wind_intensity}</p>
-            <p>Number of Actors: {worldInfo.num_actors}</p>
+            <p>Number of Vehicles: {worldInfo.num_vehicles}</p>
           </div>
-          <div className="map-graph">
-            <canvas ref={canvasRef}></canvas>
-          </div>
-          <div className="ego-sensors">
-            {hasEgo && (
-              <>
+          <WeatherSelect />
+          <MapSelect />
+          <VehiclesNumberInput />
+          <RemoveLayers />
+        </div>
+        <div className="middle">
+          {hasEgo && (
+            <>
+              <div className="map-graph">
+                <canvas ref={canvasRef}></canvas>
+              </div>
+              <div className="ego-sensors">
                 <h2>Ego Sensors</h2>
-                <p>
-                  Collision History: {JSON.stringify(sensors.collision_history)}
-                </p>
                 <p>GNSS Data: {JSON.stringify(sensors.gnss_data)}</p>
-                <img src={`data:image/png;base64,${sensors.image}`} />
-              </>
-            )}
-          </div>
+                <img
+                  className="carla-image"
+                  src={`data:image/png;base64,${sensors.image}`}
+                />
+              </div>
+            </>
+          )}
         </div>
         <div className="right-controls">
-          <EgoButtonGroup />
+          <EgoButtonGroup
+            hasEgo={hasEgo}
+            setHasEgo={(value) => setHasEgo(value)}
+          />
           <RandomButtonGroup />
-          {alert && <Alert severity="error">Error removing all actors</Alert>}
+          {alert && <Alert severity="error">Error removing all vehicles</Alert>}
           <Button
             sx={{
               backgroundColor: "#f44336",
@@ -229,7 +268,7 @@ function App() {
             }}
             onClick={removeAllActors}
           >
-            Remove All Actors
+            Remove All Vehicles
           </Button>
         </div>
       </div>

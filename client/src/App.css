@@ -22,6 +22,7 @@ main {
   align-items: stretch;
   flex-direction: row;
   height: 80%;
+  gap: 50px;
 }
 
 .left-controls,
@@ -35,10 +36,6 @@ main {
   margin-right: 10px;
 }
 
-.middle {
-  width: 50%;
-}
-
 .world-info {
   display: flex;
   flex-direction: column;
@@ -46,15 +43,6 @@ main {
   align-items: center;
 }
 
-.carla-image img {
-  height: 100%;
-  width: 100%;
-  display: block;
-}
-
-.footer {
-  height: 10%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+.map-graph {
+  border: 2px solid black;
 }

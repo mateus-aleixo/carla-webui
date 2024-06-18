@@ -7,6 +7,16 @@ def get_map_name(world):
     return world.get_map().name.split("/")[-1]
 
 
+def get_vehicles(world):
+    """Method to get vehicles"""
+    return [
+        actor
+        for actor in world.world.get_actors()
+        if actor.attributes.get("role_name") == "random_vehicle"
+        or actor.attributes.get("role_name") == "ego_vehicle"
+    ]
+
+
 def find_weather_presets():
     """Method to find weather presets"""
     rgx = re.compile(".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)")

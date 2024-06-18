@@ -1,6 +1,5 @@
 import carla
 from classes.CameraManager import CameraManager
-from classes.CollisionSensor import CollisionSensor
 from classes.GnssSensor import GnssSensor
 from functions.global_functions import find_weather_presets, get_actor_blueprints
 import random
@@ -25,7 +24,6 @@ class World(object):
             sys.exit(1)
 
         self.player = None
-        self.collision_sensor = None
         self.gnss_sensor = None
         self.camera_manager = None
         self._weather_presets = find_weather_presets()
@@ -92,7 +90,6 @@ class World(object):
             self.modify_vehicle_physics(self.player)
 
         # Set up the sensors.
-        self.collision_sensor = CollisionSensor(self.player)
         self.gnss_sensor = GnssSensor(self.player)
         self.camera_manager = CameraManager(self.player)
         self.camera_manager.transform_index = cam_pos_id
@@ -135,3 +132,5 @@ class World(object):
         for actor in actors:
             if actor is not None:
                 actor.destroy()
+        
+        self.player = None

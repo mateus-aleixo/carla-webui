@@ -2,36 +2,11 @@ import base64
 import carla
 from classes.World import World
 from flask import Blueprint, jsonify, request
-from functions.global_functions import get_map_name, has_ego_vehicle
+from functions.global_functions import get_map_name, has_ego_vehicle, get_vehicles
 import io
 import logging
 import matplotlib.pyplot as plt
 import random
-
-# DONT DELETE ROUTE BELOW
-# import base64
-# import cv2
-# import imutils
-# import numpy as np
-# import pyautogui
-# import pygetwindow
-
-# @api.route("/image", methods=["GET"])
-# def image():
-#     carla_window = pygetwindow.getWindowsWithTitle("CarlaUE4")[0]
-#     x, y, width, height = (
-#         carla_window.left,
-#         carla_window.top,
-#         carla_window.width,
-#         carla_window.height,
-#     )
-#     frame = np.array(pyautogui.screenshot(region=(x, y, width, height)))
-#     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-#     frame = imutils.resize(frame, width=800)
-#     _, buffer = cv2.imencode(".png", frame)
-#     image = base64.b64encode(buffer).decode("utf-8")
-
-#     return jsonify({"image": image})
 
 
 world = None
@@ -49,19 +24,30 @@ def create_api(cache):
     world = World(client.get_world())
 
     @api.route("/world_info", methods=["GET"])
-    @cache.cached(timeout=60)
+    @cache.cached(timeout=1)
     def world_info():
         """Get the world information from the CARLA world."""
         weather = world.world.get_weather()
-        actors = world.world.get_actors()
+        vehicles = get_vehicles(world)
+
         return jsonify(
             {
                 "map": get_map_name(world.world),
                 "precipitation": weather.precipitation,
                 "wind_intensity": weather.wind_intensity,
-                "num_actors": len(actors),
+                "num_vehicles": len(vehicles),
             }
         )
+
+    @api.route("/vehicles", methods=["GET"])
+    @cache.cached(timeout=1)
+    def actor_locations():
+        """Get the actor locations from the CARLA world."""
+        actor_locations = [
+            [actor.get_location().x, actor.get_location().y]
+            for actor in world.world.get_actors()
+        ]
+        return jsonify({"actor_locations": actor_locations})
 
     @api.route("/map_info", methods=["GET"])
     @cache.cached(timeout=60)
@@ -69,10 +55,6 @@ def create_api(cache):
         """Get the map information from the CARLA world."""
         spawn_points = [
             [sp.location.x, sp.location.y] for sp in world.map.get_spawn_points()
-        ]
-        actor_locations = [
-            [actor.get_location().x, actor.get_location().y]
-            for actor in world.world.get_actors()
         ]
         x_coords = [point[0] for point in spawn_points]
         y_coords = [point[1] for point in spawn_points]
@@ -82,9 +64,13 @@ def create_api(cache):
             {
                 "size": [width, height],
                 "spawn_points": spawn_points,
-                "actor_locations": actor_locations,
             }
         )
+
+    @api.route("/ego/vehicle", methods=["GET"])
+    def has_ego():
+        """Check if the ego vehicle exists in the CARLA world."""
+        return jsonify({"has_ego": has_ego_vehicle(world.world)})
 
     @api.route("/ego/sensors", methods=["GET"])
     def ego_sensors():
@@ -94,14 +80,12 @@ def create_api(cache):
         if not ego_vehicle:
             return jsonify({"error": "ego vehicle not found"}), 404
 
-        collision_sensor = world.collision_sensor
         gnss_sensor = world.gnss_sensor
         camera_manager = world.camera_manager
 
-        if collision_sensor is None or gnss_sensor is None or camera_manager is None:
+        if gnss_sensor is None or camera_manager is None:
             return jsonify({"error": "sensors not found"}), 404
 
-        collision_history = collision_sensor.get_collision_history()
         gnss_data = gnss_sensor.get_data()
         camera_image = camera_manager.get_camera_image()
 
@@ -112,7 +96,6 @@ def create_api(cache):
 
         return jsonify(
             {
-                "collision_history": collision_history,
                 "gnss_data": gnss_data,
                 "image": image,
             }
@@ -272,8 +255,17 @@ def create_api(cache):
     @api.route("/destroy/all", methods=["DELETE"])
     def destroy_all():
         """Destroy all actors in the CARLA world."""
-        for actor in world.world.get_actors():
-            actor.destroy()
+        vehicles = get_vehicles(world)
+
+        if len(vehicles) == 0:
+            return jsonify({"error": "no actors to destroy"}), 400
+
+        for vehicle in vehicles:
+            if vehicle.attributes.get("role_name") == "ego_vehicle":
+                world.destroy()
+            else:
+                vehicle.destroy()
+
         return jsonify({"success": "all actors destroyed"}), 200
 
     return api

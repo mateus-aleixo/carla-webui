@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import Checkbox, { CheckboxProps } from "@mui/material/Checkbox";
 import { FormGroup, FormControlLabel, Box, Alert } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { baseUrl } from "../../services/api";
 
 const BpIcon = styled("span")(({ theme }) => ({
@@ -150,8 +150,11 @@ export default function RemoveLayers() {
         All: false,
       });
     }
-    fetchLayer();
   };
+
+  useEffect(() => {
+    fetchLayer();
+  }, [fetchLayer, layers]);
 
   return (
     <Box sx={{ minWidth: 100 }}>

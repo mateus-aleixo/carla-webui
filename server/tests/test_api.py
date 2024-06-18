@@ -27,7 +27,14 @@ def test_world_info(client):
     assert "map" in data
     assert "precipitation" in data
     assert "wind_intensity" in data
-    assert "num_actors" in data
+    assert "num_vehicles" in data
+
+
+def test_actor_locations(client):
+    response = client.get("/api/carla/vehicles")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "actor_locations" in data
 
 
 def test_map_info(client):
@@ -36,7 +43,13 @@ def test_map_info(client):
     data = response.get_json()
     assert "size" in data
     assert "spawn_points" in data
-    assert "actor_locations" in data
+
+
+def test_has_ego(client):
+    response = client.get("/api/carla/ego/vehicle")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "has_ego" in data
 
 
 def test_set_weather(client):
