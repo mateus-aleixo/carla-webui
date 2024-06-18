@@ -84,20 +84,6 @@ export default function RemoveLayers() {
   });
   const [alert, setAlert] = useState(false);
 
-  const fetchLayer = async () => {
-    const res = await fetch(`${baseUrl}/api/carla/layers`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ layers }),
-    });
-
-    const { error, success } = await res.json();
-
-    setAlert(error || !success);
-  };
-
   const handleChange = (layer: string) => {
     if (layer === "All") {
       setLayers({
@@ -153,11 +139,53 @@ export default function RemoveLayers() {
   };
 
   useEffect(() => {
+    const fetchLayer = async () => {
+      const res = await fetch(`${baseUrl}/api/carla/layers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ layers }),
+      });
+
+      const { error, success } = await res.json();
+
+      setAlert(error || !success);
+    };
+
     fetchLayer();
-  }, [fetchLayer, layers]);
+  }, [layers]);
+
+  const alertUser = (e: {
+    preventDefault: () => void;
+    returnValue: string;
+  }) => {
+    e.preventDefault();
+    e.returnValue = "";
+    setLayers({
+      Buildings: false,
+      Decals: false,
+      Foliage: false,
+      Ground: false,
+      ParkedVehicles: false,
+      Particles: false,
+      Props: false,
+      StreetLights: false,
+      Walls: false,
+      NONE: false,
+      All: true,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
 
   return (
-    <Box sx={{ minWidth: 100 }}>
+    <Box sx={{ minWidth: 100, marginBottom: 3 }}>
       {alert && (
         <Alert severity="error">
           Failed to remove layers, please try again.

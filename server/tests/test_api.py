@@ -30,11 +30,14 @@ def test_world_info(client):
     assert "num_vehicles" in data
 
 
-def test_actor_locations(client):
+def test_locations(client):
     response = client.get("/api/carla/vehicles")
     assert response.status_code == 200
     data = response.get_json()
-    assert "actor_locations" in data
+    assert "sign_locations" in data
+    assert "vehicle_locations" in data
+    assert "ego_location" in data
+    assert "spectator_location" in data
 
 
 def test_map_info(client):

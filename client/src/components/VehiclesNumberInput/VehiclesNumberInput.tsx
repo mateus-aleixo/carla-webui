@@ -6,8 +6,11 @@ export default function NumberInputIntroduction() {
   const [value, setValue] = useState(0);
   const [alert, setAlert] = useState(false);
   const [error, setError] = useState(false);
+  const [vehicles_added, setVehiclesAdded] = useState(0);
 
   const updateVehicles = async () => {
+    setVehiclesAdded(0);
+
     const res = await fetch(`${baseUrl}/api/carla/random/vehicles`, {
       method: "POST",
       headers: {
@@ -18,9 +21,13 @@ export default function NumberInputIntroduction() {
       }),
     });
 
-    const { error, success } = await res.json();
+    const { error, success, vehicles_spawned } = await res.json();
 
     setError(error || !success);
+
+    if (vehicles_spawned) {
+      setVehiclesAdded(vehicles_spawned);
+    }
   };
 
   const updateValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +48,8 @@ export default function NumberInputIntroduction() {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        alignItems: "center",
+        alignItems: "stretch",
+        marginBottom: 3,
       }}
     >
       {alert && (
@@ -50,7 +58,10 @@ export default function NumberInputIntroduction() {
         </Alert>
       )}
       {error && (
-        <Alert severity="error">An error occurred while adding vehicles</Alert>
+        <Alert severity="error">
+          An error occurred while adding vehicles, {vehicles_added} vehicles
+          were added
+        </Alert>
       )}
       <TextField
         onChange={updateValue}
@@ -59,7 +70,7 @@ export default function NumberInputIntroduction() {
         variant="outlined"
       />
       <Button variant="contained" onClick={updateVehicles}>
-        Update Number of Vehicles
+        Update Number of Random Vehicles
       </Button>
     </Box>
   );

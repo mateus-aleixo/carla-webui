@@ -1,6 +1,6 @@
 {
     "map": "Town10",
     "precipitation": 0,
-    "wind_intensity": 0,
-    "num_actors": 0
+    "wind_intensity": 10,
+    "num_vehicles": 0
 }

@@ -7,6 +7,11 @@ def get_map_name(world):
     return world.get_map().name.split("/")[-1]
 
 
+def get_actors(world):
+    """Method to get actors"""
+    return world.world.get_actors()
+
+
 def get_vehicles(world):
     """Method to get vehicles"""
     return [

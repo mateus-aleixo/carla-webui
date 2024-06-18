@@ -124,7 +124,6 @@ class World(object):
         """Destroys all actors"""
         actors = [
             self.camera_manager.sensor,
-            self.collision_sensor.sensor,
             self.gnss_sensor.sensor,
             self.player,
         ]
@@ -132,5 +131,5 @@ class World(object):
         for actor in actors:
             if actor is not None:
                 actor.destroy()
-        
+
         self.player = None

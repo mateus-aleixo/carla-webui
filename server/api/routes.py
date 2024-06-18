@@ -2,7 +2,12 @@ import base64
 import carla
 from classes.World import World
 from flask import Blueprint, jsonify, request
-from functions.global_functions import get_map_name, has_ego_vehicle, get_vehicles
+from functions.global_functions import (
+    get_map_name,
+    has_ego_vehicle,
+    get_actors,
+    get_vehicles,
+)
 import io
 import logging
 import matplotlib.pyplot as plt
@@ -41,16 +46,45 @@ def create_api(cache):
 
     @api.route("/vehicles", methods=["GET"])
     @cache.cached(timeout=1)
-    def actor_locations():
+    def locations():
         """Get the actor locations from the CARLA world."""
-        actor_locations = [
-            [actor.get_location().x, actor.get_location().y]
-            for actor in world.world.get_actors()
-        ]
-        return jsonify({"actor_locations": actor_locations})
+        actors = get_actors(world)
+        vehicles = get_vehicles(world)
+
+        sign_locations = []
+        spectator_location = []
+        for actor in actors:
+            if actor.type_id == "traffic.traffic_light":
+                sign_locations.append([actor.get_location().x, actor.get_location().y])
+            elif actor.type_id == "spectator":
+                spectator_location = [actor.get_location().x, actor.get_location().y]
+            else:
+                pass
+
+        vehicle_locations = []
+        ego_location = []
+
+        for vehicle in vehicles:
+            if vehicle.attributes.get("role_name") == "random_vehicle":
+                vehicle_locations.append(
+                    [vehicle.get_location().x, vehicle.get_location().y]
+                )
+            elif vehicle.attributes.get("role_name") == "ego_vehicle":
+                ego_location = [vehicle.get_location().x, vehicle.get_location().y]
+            else:
+                pass
+
+        return jsonify(
+            {
+                "sign_locations": sign_locations,
+                "vehicle_locations": vehicle_locations,
+                "ego_location": ego_location,
+                "spectator_location": spectator_location,
+            }
+        )
 
     @api.route("/map_info", methods=["GET"])
-    @cache.cached(timeout=60)
+    @cache.cached(timeout=1)
     def map_info():
         """Get the map information from the CARLA world."""
         spawn_points = [
@@ -208,7 +242,7 @@ def create_api(cache):
         """Remove all random vehicles from the CARLA world."""
         random_vehicles = [
             actor
-            for actor in world.world.get_actors()
+            for actor in get_actors(world)
             if actor.attributes.get("role_name") == "random_vehicle"
         ]
         for vehicle in random_vehicles:
@@ -221,7 +255,7 @@ def create_api(cache):
         num_vehicles = request.json.get("num_vehicles")
         random_vehicles = [
             actor
-            for actor in world.world.get_actors()
+            for actor in get_actors(world)
             if actor.attributes.get("role_name") == "random_vehicle"
         ]
         n = len(random_vehicles)
@@ -236,7 +270,8 @@ def create_api(cache):
                     return (
                         jsonify(
                             {
-                                "error": f"random vehicle could not be spawned, {vehicles_spawned} vehicles added"
+                                "error": f"random vehicle could not be spawned",
+                                "vehicles_spawned": vehicles_spawned,
                             }
                         ),
                         status_code,
@@ -266,6 +301,6 @@ def create_api(cache):
             else:
                 vehicle.destroy()
 
-        return jsonify({"success": "all actors destroyed"}), 200
+        return jsonify({"success": "all vehicles destroyed"}), 200
 
     return api

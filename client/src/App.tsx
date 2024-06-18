@@ -5,37 +5,22 @@ import WeatherSelect from "./components/WeatherSelect/WeatherSelect";
 import MapSelect from "./components/MapSelect/MapSelect";
 import RemoveLayers from "./components/RemoveLayers/RemoveLayers";
 import EgoButtonGroup from "./components/EgoButtonGroup/EgoButtonGroup";
-import RandomButtonGroup from "./components/RandomButtonGroup/RandomButtonGroup";
-import { Alert, Button } from "@mui/material";
 import Chart from "chart.js/auto";
 import VehiclesNumberInput from "./components/VehiclesNumberInput/VehiclesNumberInput";
-
-interface WorldInfo {
-  map: string;
-  precipitation: number;
-  wind_intensity: number;
-  num_vehicles: number;
-}
-
-interface MapInfo {
-  size: number[];
-  spawn_points: number[][];
-  actor_locations: number[][];
-}
-
-interface Sensors {
-  gnss_data: { [key: string]: number };
-  image: string;
-}
+import { MapInfo } from "./types/MapInfo";
+import { Sensors } from "./types/Sensors";
+import { WorldInfo } from "./types/WorldInfo";
 
 function App() {
   const [mapInfo, setMapInfo] = useState<MapInfo>({
     size: [] as number[],
     spawn_points: [] as number[][],
-    actor_locations: [] as number[][],
+    sign_locations: [] as number[][],
+    vehicle_locations: [] as number[][],
+    ego_location: [] as number[],
+    spectator_location: [] as number[],
   });
   const [chart, setChart] = useState<Chart | null>(null);
-  const [alert, setAlert] = useState(false);
   const [worldInfo, setWorldInfo] = useState<WorldInfo>({
     map: "Town10",
     precipitation: 0,
@@ -69,8 +54,19 @@ function App() {
     const res = await fetch(`${baseUrl}/api/carla/vehicles`, {
       method: "GET",
     });
-    const { actor_locations } = await res.json();
-    setMapInfo((prev) => ({ ...prev, actor_locations }));
+    const {
+      sign_locations,
+      vehicle_locations,
+      ego_location,
+      spectator_location,
+    } = await res.json();
+    setMapInfo((prev) => ({
+      ...prev,
+      sign_locations,
+      vehicle_locations,
+      ego_location,
+      spectator_location,
+    }));
   };
 
   const fetchMapInfo = async () => {
@@ -98,14 +94,6 @@ function App() {
       gnss_data,
       image,
     });
-  };
-
-  const removeAllActors = async () => {
-    const res = await fetch(`${baseUrl}/api/carla/destroy/all`, {
-      method: "DELETE",
-    });
-    const { error, success } = await res.json();
-    setAlert(error || !success);
   };
 
   const checkIfEgoExists = async () => {
@@ -143,10 +131,22 @@ function App() {
         x: point[0],
         y: point[1],
       }));
-      const actorLocationsData = mapInfo.actor_locations.map((location) => ({
-        x: location[0],
-        y: location[1],
+      const signLocationsData = mapInfo.sign_locations.map((point) => ({
+        x: point[0],
+        y: point[1],
       }));
+      const vehicleLocationsData = mapInfo.vehicle_locations.map((point) => ({
+        x: point[0],
+        y: point[1],
+      }));
+      const egoLocationData = Array.of({
+        x: mapInfo.ego_location[0],
+        y: mapInfo.ego_location[1],
+      });
+      const spectatorLocationData = Array.of({
+        x: mapInfo.spectator_location[0],
+        y: mapInfo.spectator_location[1],
+      });
 
       if (!chart) {
         const newChart = new Chart(ctx, {
@@ -154,17 +154,38 @@ function App() {
           data: {
             datasets: [
               {
-                label: "Spawn Points",
-                data: spawnPointsData,
-                backgroundColor: "rgba(54, 162, 235, 0.6)", // Blue
-                borderColor: "rgba(54, 162, 235, 1)",
+                label: "Spectator Location", // yellow
+                data: spectatorLocationData,
+                backgroundColor: "rgba(255, 255, 0, 0.8)",
+                borderColor: "rgba(255, 255, 0, 1)",
                 borderWidth: 1,
               },
               {
-                label: "Actor Locations",
-                data: actorLocationsData,
-                backgroundColor: "rgba(255, 99, 132, 0.6)", // Red
-                borderColor: "rgba(255, 99, 132, 1)",
+                label: "Ego Location", // red
+                data: egoLocationData,
+                backgroundColor: "rgba(255, 0, 0, 0.8)",
+                borderColor: "rgba(255, 0, 0, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Vehicle Locations", // green
+                data: vehicleLocationsData,
+                backgroundColor: "rgba(0, 255, 0, 0.8)",
+                borderColor: "rgba(0, 255, 0, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Sign Locations", // brown
+                data: signLocationsData,
+                backgroundColor: "rgba(100, 65, 23, 0.8)",
+                borderColor: "rgba(0, 0, 0, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Spawn Points", // cyan
+                data: spawnPointsData,
+                backgroundColor: "rgba(0, 255, 255, 0.2)",
+                borderColor: "rgba(0, 0, 0, 1)",
                 borderWidth: 1,
               },
             ],
@@ -180,7 +201,7 @@ function App() {
             },
             plugins: {
               legend: {
-                display: false,
+                display: true,
               },
               tooltip: {
                 enabled: false,
@@ -203,8 +224,11 @@ function App() {
         });
         setChart(newChart);
       } else {
-        chart.data.datasets[0].data = spawnPointsData;
-        chart.data.datasets[1].data = actorLocationsData;
+        chart.data.datasets[0].data = spectatorLocationData;
+        chart.data.datasets[1].data = egoLocationData;
+        chart.data.datasets[2].data = vehicleLocationsData;
+        chart.data.datasets[3].data = signLocationsData;
+        chart.data.datasets[4].data = spawnPointsData;
         chart.update();
       }
     }
@@ -223,53 +247,48 @@ function App() {
       <div className="body">
         <div className="left-controls">
           <div className="world-info">
-            <h2>World Info</h2>
+            <h3>World Info</h3>
             <p>Map: {worldInfo.map}</p>
             <p>Precipitation: {worldInfo.precipitation}</p>
             <p>Wind Intensity: {worldInfo.wind_intensity}</p>
             <p>Number of Vehicles: {worldInfo.num_vehicles}</p>
           </div>
+
           <WeatherSelect />
+
           <MapSelect />
+
           <VehiclesNumberInput />
+
           <RemoveLayers />
-        </div>
-        <div className="middle">
-          {hasEgo && (
-            <>
-              <div className="map-graph">
-                <canvas ref={canvasRef}></canvas>
-              </div>
-              <div className="ego-sensors">
-                <h2>Ego Sensors</h2>
-                <p>GNSS Data: {JSON.stringify(sensors.gnss_data)}</p>
-                <img
-                  className="carla-image"
-                  src={`data:image/png;base64,${sensors.image}`}
-                />
-              </div>
-            </>
-          )}
-        </div>
-        <div className="right-controls">
+
           <EgoButtonGroup
             hasEgo={hasEgo}
             setHasEgo={(value) => setHasEgo(value)}
+            mapInfo={mapInfo}
+            setMapInfo={(value) => setMapInfo(value)}
           />
-          <RandomButtonGroup />
-          {alert && <Alert severity="error">Error removing all vehicles</Alert>}
-          <Button
-            sx={{
-              backgroundColor: "#f44336",
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "#d32f2f",
-              },
-            }}
-            onClick={removeAllActors}
-          >
-            Remove All Vehicles
-          </Button>
+        </div>
+
+        <div className="middle">
+          <div className="map-graph">
+            <canvas ref={canvasRef}></canvas>
+          </div>
+          {hasEgo && (
+            <div className="ego-sensors">
+              <h2>Ego Sensors</h2>
+              {sensors.gnss_data?.lat && (
+                <p>
+                  Latitude: {sensors.gnss_data.lat} | Longitude:{" "}
+                  {sensors.gnss_data.lon}
+                </p>
+              )}
+              <img
+                className="carla-image"
+                src={`data:image/png;base64,${sensors.image}`}
+              />
+            </div>
+          )}
         </div>
       </div>
     </main>

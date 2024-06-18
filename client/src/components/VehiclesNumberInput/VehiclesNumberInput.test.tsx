@@ -3,5 +3,5 @@ import VehiclesNumberInput from "./VehiclesNumberInput";
 
 test("renders VehiclesNumberInput component", () => {
   render(<VehiclesNumberInput />);
-  expect(screen.getByText("Select Weather")).toBeInTheDocument();
+  expect(screen.getByText("Update Number of Random Vehicles")).toBeInTheDocument();
 });

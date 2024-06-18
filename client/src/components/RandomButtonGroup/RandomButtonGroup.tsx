@@ -1,4 +1,4 @@
-import { Alert, Box, Button, ButtonGroup } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import { baseUrl } from "../../services/api";
 import { useState } from "react";
 
@@ -40,10 +40,8 @@ export default function RandomButtonGroup() {
       {alerts.removeVehicle && (
         <Alert severity="error">Error removing random vehicle</Alert>
       )}
-      <ButtonGroup variant="contained">
-        <Button onClick={addRandomVehicle}>Add Random Vehicle</Button>
-        <Button onClick={removeRandomVehicle}>Remove Random Vehicles</Button>
-      </ButtonGroup>
+        <Button variant="contained" onClick={addRandomVehicle}>Add Random Vehicle</Button>
+        <Button variant="contained" onClick={removeRandomVehicle}>Remove Random Vehicles</Button>
     </Box>
   );
 }

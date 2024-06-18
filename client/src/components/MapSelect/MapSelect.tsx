@@ -31,7 +31,7 @@ export default function MapSelect() {
   };
 
   return (
-    <Box sx={{ minWidth: 100 }}>
+    <Box sx={{ minWidth: 100, marginBottom: 3 }}>
       {alert && (
         <Alert severity="error">Failed to set map, please try again.</Alert>
       )}

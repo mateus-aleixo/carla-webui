@@ -31,7 +31,7 @@ export default function WeatherSelect() {
   };
 
   return (
-    <Box sx={{ minWidth: 100 }}>
+    <Box sx={{ minWidth: 100, marginTop: 3, marginBottom: 3 }}>
       {alert && (
         <Alert severity="error">Failed to set weather, please try again.</Alert>
       )}

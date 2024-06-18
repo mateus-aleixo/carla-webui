@@ -7,11 +7,8 @@ describe('CARLA Web UI Tests', () => {
         cy.intercept('GET', '/api/carla/map_info', {
             fixture: 'map_info.json',
         });
-        cy.intercept('GET', '/api/carla/ego/sensors', {
-            fixture: 'sensors.json',
-        });
         cy.intercept('DELETE', '/api/carla/destroy/all', {
-            body: { success: true },
+            body: { "success": "all vehicles destroyed" },
         });
         cy.visit('/');
     });
@@ -19,19 +16,13 @@ describe('CARLA Web UI Tests', () => {
     it('should display world info correctly', () => {
         cy.contains('Map: Town10');
         cy.contains('Precipitation: 0');
-        cy.contains('Wind Intensity: 0');
-        cy.contains('Number of Actors: 0');
+        cy.contains('Wind Intensity: 10');
+        cy.contains('Number of Vehicles: 0');
     });
 
-    it('should display ego sensors correctly', () => {
-        cy.get('.ego-sensors').should('exist');
-        cy.contains('Collision History:');
-        cy.contains('GNSS Data:');
-        cy.get('.ego-sensors img').should('have.attr', 'src').should('include', 'data:image/png;base64');
-    });
 
     it('should remove all actors when button is clicked', () => {
-        cy.get('button').contains('Remove All Actors').click();
+        cy.get('button').contains('Remove All Vehicles').click();
         cy.get('.MuiAlert-message').should('not.exist');
     });
 });
