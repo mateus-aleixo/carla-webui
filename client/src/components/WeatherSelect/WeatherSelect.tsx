@@ -7,10 +7,22 @@ import { useState } from "react";
 import { baseUrl } from "../../services/api";
 import { Alert } from "@mui/material";
 
+/**
+ * WeatherSelect component
+ * @returns WeatherSelect component
+ * @example
+ * <WeatherSelect />
+ */
 export default function WeatherSelect() {
   const [weather, setWeather] = useState("");
   const [alert, setAlert] = useState(false);
 
+  /**
+   * Function to fetch the weather
+   * @param weather - The selected weather
+   * @example
+   * fetchWeather("ClearNoon");
+   */
   const fetchWeather = async (weather: string) => {
     const res = await fetch(`${baseUrl}/api/carla/weather`, {
       method: "POST",
@@ -25,6 +37,12 @@ export default function WeatherSelect() {
     setAlert(error || !success);
   };
 
+  /**
+   * Function to handle the change of the weather
+   * @param event - The event of the weather change
+   * @example
+   * handleChange(event);
+   */
   const handleChange = (event: SelectChangeEvent) => {
     setWeather(event.target.value as string);
     fetchWeather(event.target.value as string);

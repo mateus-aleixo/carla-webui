@@ -7,10 +7,22 @@ import { useState } from "react";
 import { baseUrl } from "../../services/api";
 import { Alert } from "@mui/material";
 
+/**
+ * MapSelect component
+ * @returns MapSelect component
+ * @example
+ * <MapSelect />
+ */
 export default function MapSelect() {
   const [map, setMap] = useState("");
   const [alert, setAlert] = useState(false);
 
+  /**
+   * Fetches the selected map
+   * @param map - The selected map
+   * @example
+   * fetchMap("Town01_Opt");
+   */
   const fetchMap = async (map: string) => {
     const res = await fetch(`${baseUrl}/api/carla/map`, {
       method: "POST",
@@ -25,6 +37,12 @@ export default function MapSelect() {
     setAlert(error || !success);
   };
 
+  /**
+   * Handles the change of the selected map
+   * @param event - The event of the selected map
+   * @example
+   * handleChange(event);
+   */
   const handleChange = (event: SelectChangeEvent) => {
     setMap(event.target.value as string);
     fetchMap(event.target.value as string);

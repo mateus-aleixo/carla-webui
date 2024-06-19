@@ -3,6 +3,7 @@ import EgoButtonGroup from "./EgoButtonGroup";
 import { useState } from "react";
 import { MapInfo } from "../../types/MapInfo";
 
+// Test to check if EgoButtonGroup component is rendered
 test("renders EgoButtonGroup component", () => {
   const [hasEgo, setHasEgo] = useState(false);
   const [mapInfo, setMapInfo] = useState<MapInfo>({

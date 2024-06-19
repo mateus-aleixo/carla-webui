@@ -5,6 +5,21 @@ import { baseUrl } from "../../services/api";
 import { MapInfo } from "../../types/MapInfo";
 import RandomButtonGroup from "../RandomButtonGroup/RandomButtonGroup";
 
+/**
+ * EgoButtonGroup component
+ * @param hasEgo - boolean value to check if EGO vehicle exists
+ * @param setHasEgo - function to set EGO vehicle
+ * @param mapInfo - object containing map information
+ * @param setMapInfo - function to set map information
+ * @returns EgoButtonGroup component
+ * @example
+ * <EgoButtonGroup
+ *  hasEgo={hasEgo}
+ * setHasEgo={setHasEgo}
+ * mapInfo={mapInfo}
+ * setMapInfo={setMapInfo}
+ * />
+ */
 export default function EgoButtonGroup({
   hasEgo,
   setHasEgo,
@@ -23,6 +38,12 @@ export default function EgoButtonGroup({
   });
   const [alert, setAlert] = useState(false);
 
+  /**
+   * Function to add EGO vehicle to the simulation
+   * @param ego - EGO vehicle name
+   * @example
+   * addEgo("audi.a2")
+   */
   const addEgo = async (ego: string) => {
     const res = await fetch(`${baseUrl}/api/carla/ego/add`, {
       method: "POST",
@@ -40,6 +61,7 @@ export default function EgoButtonGroup({
     setOpen(false);
   };
 
+  // Function to remove EGO vehicle from the simulation
   const removeEgo = async () => {
     const res = await fetch(`${baseUrl}/api/carla/ego/remove`, {
       method: "DELETE",
@@ -52,6 +74,7 @@ export default function EgoButtonGroup({
     setHasEgo(alert);
   };
 
+  // Function to fetch map information
   const fetchMapInfo = async () => {
     const res = await fetch(`${baseUrl}/api/carla/map_info`, {
       method: "GET",
@@ -60,11 +83,13 @@ export default function EgoButtonGroup({
     setMapInfo({ ...mapInfo, size, spawn_points });
   };
 
+  // Function to handle adding EGO vehicle
   const handleAdd = () => {
     setOpen(true);
     fetchMapInfo();
   };
 
+  // Function to remove all actors from the simulation
   const removeAllActors = async () => {
     const res = await fetch(`${baseUrl}/api/carla/destroy/all`, {
       method: "DELETE",

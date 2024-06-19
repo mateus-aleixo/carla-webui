@@ -2,6 +2,9 @@ import carla
 import re
 
 
+"""Global functions for CARLA Simulator"""
+
+
 def get_map_name(world):
     """Method to get map name"""
     return world.get_map().name.split("/")[-1]

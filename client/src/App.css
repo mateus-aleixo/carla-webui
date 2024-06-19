@@ -1,3 +1,7 @@
+/*
+  This file contains the styles for the App component.
+*/
+
 main {
   height: 100vh;
   display: flex;

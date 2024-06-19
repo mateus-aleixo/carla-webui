@@ -6,6 +6,9 @@ import random
 import sys
 
 
+"""World class for the surrounding environment"""
+
+
 class World(object):
     """Class representing the surrounding environment"""
 

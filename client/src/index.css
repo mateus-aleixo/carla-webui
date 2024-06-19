@@ -1,3 +1,8 @@
+/*
+  This file is used to reset the default styles of the browser.
+  It is used to remove the default margin and padding of the browser.
+*/
+
 * {
   padding: 0;
   margin: 0;

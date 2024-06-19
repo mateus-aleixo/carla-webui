@@ -2,6 +2,9 @@ import carla
 import weakref
 
 
+"""GnssSensor class for GNSS sensor"""
+
+
 class GnssSensor(object):
     """Class for GNSS sensors"""
 

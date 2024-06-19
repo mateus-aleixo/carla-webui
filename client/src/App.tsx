@@ -11,6 +11,12 @@ import { MapInfo } from "./types/MapInfo";
 import { Sensors } from "./types/Sensors";
 import { WorldInfo } from "./types/WorldInfo";
 
+/**
+ * App component
+ * @returns App component
+ * @example
+ * <App />
+ */
 function App() {
   const [mapInfo, setMapInfo] = useState<MapInfo>({
     size: [] as number[],
@@ -33,9 +39,9 @@ function App() {
   });
   const [hasEgo, setHasEgo] = useState(false);
   const [loadingInfo, setLoadingInfo] = useState(false);
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // Fetches the world info
   const fetchWorldInfo = async () => {
     const res = await fetch(`${baseUrl}/api/carla/world_info`, {
       method: "GET",
@@ -50,6 +56,7 @@ function App() {
     });
   };
 
+  // Fetches the vehicle locations
   const fetchVehicleLocations = async () => {
     const res = await fetch(`${baseUrl}/api/carla/vehicles`, {
       method: "GET",
@@ -69,6 +76,7 @@ function App() {
     }));
   };
 
+  // Fetches the map info
   const fetchMapInfo = async () => {
     const res = await fetch(`${baseUrl}/api/carla/map_info`, {
       method: "GET",
@@ -77,6 +85,7 @@ function App() {
     setMapInfo((prev) => ({ ...prev, size, spawn_points }));
   };
 
+  // Fetches the sensors
   const fetchSensors = async () => {
     const res = await fetch(`${baseUrl}/api/carla/ego/sensors`, {
       method: "GET",
@@ -96,6 +105,7 @@ function App() {
     });
   };
 
+  // Checks if the ego exists
   const checkIfEgoExists = async () => {
     const res = await fetch(`${baseUrl}/api/carla/ego/vehicle`, {
       method: "GET",
@@ -124,6 +134,7 @@ function App() {
     }
   }, [loadingInfo, hasEgo]);
 
+  // Updates the chart
   useEffect(() => {
     if (canvasRef.current && mapInfo.spawn_points.length > 0) {
       const ctx = canvasRef.current;

@@ -13,6 +13,7 @@ describe('CARLA Web UI Tests', () => {
         cy.visit('/');
     });
 
+    // Test cases
     it('should display world info correctly', () => {
         cy.contains('Map: Town10');
         cy.contains('Precipitation: 0');

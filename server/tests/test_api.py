@@ -9,6 +9,7 @@ import pytest
 
 @pytest.fixture
 def client():
+    """Create a test client for the API."""
     app = Flask(__name__)
     cache = Cache(config={"CACHE_TYPE": "SimpleCache"})
     cache.init_app(app)
@@ -21,6 +22,7 @@ def client():
 
 
 def test_world_info(client):
+    """Test the world info endpoint."""
     response = client.get("/api/carla/world_info")
     assert response.status_code == 200
     data = response.get_json()
@@ -31,6 +33,7 @@ def test_world_info(client):
 
 
 def test_locations(client):
+    """Test the locations endpoint."""
     response = client.get("/api/carla/vehicles")
     assert response.status_code == 200
     data = response.get_json()
@@ -41,6 +44,7 @@ def test_locations(client):
 
 
 def test_map_info(client):
+    """Test the map info endpoint."""
     response = client.get("/api/carla/map_info")
     assert response.status_code == 200
     data = response.get_json()
@@ -49,6 +53,7 @@ def test_map_info(client):
 
 
 def test_has_ego(client):
+    """Test the has ego endpoint."""
     response = client.get("/api/carla/ego/vehicle")
     assert response.status_code == 200
     data = response.get_json()
@@ -56,6 +61,7 @@ def test_has_ego(client):
 
 
 def test_set_weather(client):
+    """Test the set weather endpoint."""
     response = client.post("/api/carla/weather", json={"weather": "ClearNoon"})
     assert response.status_code == 200
     data = response.get_json()
@@ -63,6 +69,7 @@ def test_set_weather(client):
 
 
 def test_set_invalid_weather(client):
+    """Test the set weather endpoint with invalid weather."""
     response = client.post("/api/carla/weather", json={"weather": "InvalidWeather"})
     assert response.status_code == 400
     data = response.get_json()
@@ -70,6 +77,7 @@ def test_set_invalid_weather(client):
 
 
 def test_set_map(client):
+    """Test the set map endpoint."""
     response = client.post("/api/carla/map", json={"map": "Town01"})
     assert (
         response.status_code == 200 or response.status_code == 400
@@ -79,6 +87,7 @@ def test_set_map(client):
 
 
 def test_set_layers_all(client):
+    """Test the set layers endpoint with all layers."""
     response = client.post("/api/carla/layers", json={"layers": {"All": True}})
     assert response.status_code == 200
     data = response.get_json()
@@ -86,6 +95,7 @@ def test_set_layers_all(client):
 
 
 def test_set_layers_none(client):
+    """Test the set layers endpoint with no layers."""
     response = client.post("/api/carla/layers", json={"layers": {"NONE": True}})
     assert response.status_code == 200
     data = response.get_json()
@@ -93,6 +103,7 @@ def test_set_layers_none(client):
 
 
 def test_add_ego(client):
+    """Test the add ego endpoint."""
     response = client.post("/api/carla/ego/add", json={"ego": "vehicle.audi.tt"})
     assert response.status_code == 200
     data = response.get_json()
@@ -100,6 +111,7 @@ def test_add_ego(client):
 
 
 def test_get_ego_sensors(client):
+    """Test the get ego sensors endpoint."""
     response = client.get("/api/carla/ego/sensors")
     assert response.status_code == 200
     data = response.get_json()
@@ -109,6 +121,7 @@ def test_get_ego_sensors(client):
 
 
 def test_remove_ego(client):
+    """Test the remove ego endpoint."""
     client.post("/api/carla/ego/add", json={"ego": "vehicle.audi.tt"})
     response = client.delete("/api/carla/ego/remove")
     assert response.status_code == 200
@@ -117,6 +130,7 @@ def test_remove_ego(client):
 
 
 def test_add_random_vehicle(client):
+    """Test the add random vehicle endpoint."""
     response = client.post("/api/carla/random/vehicle/add")
     assert (
         response.status_code == 200 or response.status_code == 404
@@ -126,6 +140,7 @@ def test_add_random_vehicle(client):
 
 
 def test_remove_random_vehicle(client):
+    """Test the remove random vehicle endpoint."""
     client.post("/api/carla/random/vehicle/add")
     response = client.delete("/api/carla/random/vehicle/remove")
     assert response.status_code == 200
@@ -134,6 +149,7 @@ def test_remove_random_vehicle(client):
 
 
 def test_n_vehicles(client):
+    """Test the n vehicles endpoint."""
     response = client.post("/api/carla/random/vehicles", json={"num_vehicles": 5})
     assert response.status_code == 200
     data = response.get_json()
@@ -141,6 +157,7 @@ def test_n_vehicles(client):
 
 
 def test_destroy_all(client):
+    """Test the destroy all endpoint."""
     client.post("/api/carla/random/vehicle/add")
     response = client.delete("/api/carla/destroy/all")
     assert response.status_code == 200

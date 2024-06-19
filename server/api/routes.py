@@ -14,10 +14,14 @@ import matplotlib.pyplot as plt
 import random
 
 
+"""API routes for the CARLA world."""
+
+
 world = None
 
 
 def create_api(cache):
+    """Create the API routes for the CARLA world."""
     global world
     api = Blueprint("api", __name__)
 

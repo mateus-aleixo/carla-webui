@@ -4,6 +4,9 @@ import numpy as np
 import weakref
 
 
+"""CameraManager class for camera management"""
+
+
 class CameraManager(object):
     """Class for camera management"""
 

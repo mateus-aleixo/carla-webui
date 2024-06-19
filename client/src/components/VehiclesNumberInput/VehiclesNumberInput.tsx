@@ -2,12 +2,19 @@ import { baseUrl } from "../../services/api";
 import { Alert, Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 
+/**
+ * NumberInputIntroduction component
+ * @returns NumberInputIntroduction component
+ * @example
+ * <NumberInputIntroduction />
+ */
 export default function NumberInputIntroduction() {
   const [value, setValue] = useState(0);
   const [alert, setAlert] = useState(false);
   const [error, setError] = useState(false);
   const [vehicles_added, setVehiclesAdded] = useState(0);
 
+  // Function to update the number of random vehicles
   const updateVehicles = async () => {
     setVehiclesAdded(0);
 
@@ -30,6 +37,7 @@ export default function NumberInputIntroduction() {
     }
   };
 
+  // Function to update the value of the input
   const updateValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseInt(e.target.value);
 

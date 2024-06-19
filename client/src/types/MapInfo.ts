@@ -1,3 +1,4 @@
+// Definition of the MapInfo type
 export interface MapInfo {
   size: number[];
   spawn_points: number[][];

@@ -4,6 +4,7 @@ import { FormGroup, FormControlLabel, Box, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import { baseUrl } from "../../services/api";
 
+// Custom checkbox styles
 const BpIcon = styled("span")(({ theme }) => ({
   borderRadius: 5,
   width: 25,
@@ -33,6 +34,7 @@ const BpIcon = styled("span")(({ theme }) => ({
   },
 }));
 
+// Custom checked checkbox styles
 const BpCheckedIcon = styled(BpIcon)({
   backgroundColor: "#137cbd",
   backgroundImage:
@@ -52,6 +54,7 @@ const BpCheckedIcon = styled(BpIcon)({
   },
 });
 
+// Custom checkbox component
 function BpCheckbox(props: CheckboxProps) {
   return (
     <Checkbox
@@ -68,6 +71,12 @@ function BpCheckbox(props: CheckboxProps) {
   );
 }
 
+/**
+ * RemoveLayers component
+ * @returns RemoveLayers component
+ * @example
+ * <RemoveLayers />
+ */
 export default function RemoveLayers() {
   const [layers, setLayers] = useState({
     Buildings: false,
@@ -84,6 +93,12 @@ export default function RemoveLayers() {
   });
   const [alert, setAlert] = useState(false);
 
+  /**
+   * Handles the change of the selected layer
+   * @param layer - The selected layer
+   * @example
+   * handleChange("Buildings");
+   */
   const handleChange = (layer: string) => {
     if (layer === "All") {
       setLayers({
@@ -139,6 +154,7 @@ export default function RemoveLayers() {
   };
 
   useEffect(() => {
+    // Function to fetch the selected layers
     const fetchLayer = async () => {
       const res = await fetch(`${baseUrl}/api/carla/layers`, {
         method: "POST",
@@ -177,6 +193,7 @@ export default function RemoveLayers() {
     });
   };
 
+  // Event listener to alert user before leaving the page
   useEffect(() => {
     window.addEventListener("beforeunload", alertUser);
     return () => {
