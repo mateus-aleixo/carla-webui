@@ -92,7 +92,8 @@ def create_api(cache):
     def map_info():
         """Get the map information from the CARLA world."""
         spawn_points = [
-            [sp.location.x, sp.location.y] for sp in world.map.get_spawn_points()
+            [sp.location.x, sp.location.y]
+            for sp in world.world.get_map().get_spawn_points()
         ]
         x_coords = [point[0] for point in spawn_points]
         y_coords = [point[1] for point in spawn_points]
@@ -223,7 +224,7 @@ def create_api(cache):
             world.world.get_blueprint_library().filter("vehicle.*")
         )
         random_vehicle_bp.set_attribute("role_name", "random_vehicle")
-        spawn_points = world.map.get_spawn_points()
+        spawn_points = world.world.get_map().get_spawn_points()
         if spawn_points:
             random.shuffle(spawn_points)
             random_transform = spawn_points[0]

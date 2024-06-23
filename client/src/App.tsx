@@ -120,6 +120,7 @@ function App() {
 
       if (hasEgo) {
         Promise.all([
+          fetchMapInfo(),
           fetchWorldInfo(),
           fetchVehicleLocations(),
           fetchSensors(),
@@ -127,7 +128,11 @@ function App() {
           setLoadingInfo(false);
         });
       } else {
-        Promise.all([fetchWorldInfo(), fetchVehicleLocations()]).finally(() => {
+        Promise.all([
+          fetchMapInfo(),
+          fetchWorldInfo(),
+          fetchVehicleLocations(),
+        ]).finally(() => {
           setLoadingInfo(false);
         });
       }

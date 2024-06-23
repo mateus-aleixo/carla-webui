@@ -38,6 +38,9 @@ class World(object):
 
     def spawn_ego(self, ego=None):
         """Restart the world"""
+        # Get the current map and set it to the world.
+        self.map = self.world.get_map()
+        
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
         cam_pos_id = (
